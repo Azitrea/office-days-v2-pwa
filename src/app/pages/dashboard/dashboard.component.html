@@ -1,1 +1,21 @@
 <p>dashboard works!</p>
+<section>
+  <div>
+    @if (isFirebaseMessagignActive()) {
+    <button (click)="unsubscribeFromMessages()">
+      Unsubscribe from messages
+    </button>
+    } @else {
+    <button (click)="subscribeToMessages()">Subscribe to messages</button>
+    }
+  </div>
+
+  <div>
+    <div>Latest message:</div>
+    @if (firebaseMessagesSignal()) {
+    <div>{{ firebaseMessagesSignal() | json }}</div>
+    } @else {
+    <div>None</div>
+    }
+  </div>
+</section>
