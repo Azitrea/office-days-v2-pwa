@@ -1,1 +1,16 @@
 <p>profile works!</p>
+<button (click)="navigateToDashboard()">Navigate to dashboard</button>
+@if (currentUser) {
+  <div>
+    <div>Name:</div>
+    <div>{{ currentUser()?.displayName }}</div>
+  </div>
+  <div>
+    <div>Email:</div>
+    <div>{{ currentUser()?.email }}</div>
+  </div>
+} @else {
+  <div>Error. User not found.</div>
+}
+
+<button (click)="signOut()">SignOut</button>

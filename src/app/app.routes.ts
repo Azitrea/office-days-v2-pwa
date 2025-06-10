@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuardGuard } from './guard/auth-guard/auth-guard.guard';
+import { alreadyLoggedInGuard } from './guard/already-logged-in/already-logged-in.guard';
 
 export const routes: Routes = [
   {
@@ -22,6 +23,7 @@ export const routes: Routes = [
     path: 'login',
     loadComponent: () =>
       import('./pages/login/login.component').then((m) => m.LoginComponent),
+    canActivate: [alreadyLoggedInGuard],
   },
   {
     path: '**',

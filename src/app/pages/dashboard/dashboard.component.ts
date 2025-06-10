@@ -3,6 +3,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { MessagePayload } from 'firebase/messaging';
 import { CommonModule } from '@angular/common';
 import { FirebaseMessagingService } from '../../service/firebase-messaging/firebase-messaging.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
@@ -14,7 +15,10 @@ export class DashboardComponent {
   firebaseMessagesSignal: Signal<MessagePayload | undefined>;
   isFirebaseMessagignActive: Signal<boolean | undefined>;
 
-  constructor(private firebaseMessagingService: FirebaseMessagingService) {
+  constructor(
+    private firebaseMessagingService: FirebaseMessagingService,
+    private router: Router
+  ) {
     this.firebaseMessagesSignal = toSignal(
       this.firebaseMessagingService.getMessagePayloadObservable()
     );
@@ -37,5 +41,9 @@ export class DashboardComponent {
 
   unsubscribeFromMessages(): void {
     this.firebaseMessagingService.deleteUserMessageSubscription();
+  }
+
+  navigateToProfile(): void {
+    this.router.navigateByUrl('profile');
   }
 }

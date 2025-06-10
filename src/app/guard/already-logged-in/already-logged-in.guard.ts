@@ -3,7 +3,7 @@ import { CanActivateFn, Router } from '@angular/router';
 import { FirebaseAuthService } from '../../service/firebase-auth/firebase-auth.service';
 import { filter, firstValueFrom } from 'rxjs';
 
-export const authGuardGuard: CanActivateFn = async (route, state) => {
+export const alreadyLoggedInGuard: CanActivateFn = async (route, state) => {
   const router = inject(Router);
   const firebaseAuthSerivce = inject(FirebaseAuthService);
 
@@ -12,9 +12,9 @@ export const authGuardGuard: CanActivateFn = async (route, state) => {
   );
 
   if (user) {
-    return true;
+    router.navigateByUrl('');
+    return false;
   }
 
-  router.navigateByUrl('/login');
-  return false;
+  return true;
 };
