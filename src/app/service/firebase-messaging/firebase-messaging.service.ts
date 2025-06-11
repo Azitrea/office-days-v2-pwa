@@ -17,12 +17,19 @@ import { FirebaseFirestoreService } from '../firebase-firestore/firebase-firesto
 export class FirebaseMessagingService {
   private _firebaseLocalStorageKey = 'firebase-messaging-active';
 
+  private _isFirebaseMessagingInitialized = new BehaviorSubject<boolean>(false);
   private _isFirebaseMessagingActive = new BehaviorSubject<boolean>(false);
 
   private _messageSubject: Subject<MessagePayload> = new Subject();
   private _messageUnsubscribeFunction: Unsubscribe | undefined;
 
-  constructor(private firebaseFirestoreService: FirebaseFirestoreService) {}
+  constructor(private firebaseFirestoreService: FirebaseFirestoreService) {
+    this.initializeMessaging();
+  }
+
+  get isFirebaseMessagingInitialized(): boolean {
+    return this._isFirebaseMessagingInitialized.value;
+  }
 
   initializeMessaging(): void {
     this._isFirebaseMessagingActive.next(this._getFirebaseMessagingStatus());
@@ -36,28 +43,28 @@ export class FirebaseMessagingService {
     return this._messageSubject.asObservable();
   }
 
-  requestPermission() {
+  async requestPermission(): Promise<void> {
     const messaging = getMessaging();
 
-    getToken(messaging, { vapidKey: environment.firebase.vapidKey })
-      .then((currentToken) => {
-        if (currentToken) {
-          console.log('Token');
-          console.log(currentToken);
+    const currentToken = await getToken(messaging, {
+      vapidKey: environment.firebase.vapidKey,
+    }).catch((err) => {
+      console.log('An error occurred while retrieving token. ', err);
+      this._setFirebaseMessagingStatus(false);
+      return undefined;
+    });
 
-          this.firebaseFirestoreService.saveTokenToFirestore(currentToken);
-          this._setFirebaseMessagingStatus(true);
-        } else {
-          console.log(
-            'No registration token available. Request permission to generate one.'
-          );
-          this._setFirebaseMessagingStatus(false);
-        }
-      })
-      .catch((err) => {
-        console.log('An error occurred while retrieving token. ', err);
-        this._setFirebaseMessagingStatus(false);
-      });
+    if (currentToken) {
+      await this.firebaseFirestoreService.saveTokenToFirestore(currentToken);
+      this._setFirebaseMessagingStatus(true);
+      this._isFirebaseMessagingInitialized.next(true);
+    } else {
+      console.log(
+        'No registration token available. Request permission to generate one.'
+      );
+      this._setFirebaseMessagingStatus(false);
+      this._isFirebaseMessagingInitialized.next(false);
+    }
   }
 
   listen() {
@@ -68,7 +75,7 @@ export class FirebaseMessagingService {
     });
   }
 
-  async deleteUserMessageSubscription() {
+  async deleteUserMessageSubscription(): Promise<void> {
     if (!this._isFirebaseMessagingActive.value) {
       return;
     }
@@ -79,13 +86,17 @@ export class FirebaseMessagingService {
       vapidKey: environment.firebase.vapidKey,
     });
 
-    await this.firebaseFirestoreService.deleteTokenFromFirestore(token);
-    await deleteToken(messaging);
-    if (this._messageUnsubscribeFunction) {
-      this._messageUnsubscribeFunction();
-    }
+    try {
+      await this.firebaseFirestoreService.deleteTokenFromFirestore(token);
+      await deleteToken(messaging);
+      if (this._messageUnsubscribeFunction) {
+        this._messageUnsubscribeFunction();
+      }
 
-    this._setFirebaseMessagingStatus(false);
+      this._setFirebaseMessagingStatus(false);
+    } catch (error) {
+      console.error('Failed to cancel message subscriptions');
+    }
   }
 
   private _setFirebaseMessagingStatus(status: boolean): void {

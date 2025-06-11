@@ -1,16 +1,30 @@
 <p>profile works!</p>
 <button (click)="navigateToDashboard()">Navigate to dashboard</button>
 @if (currentUser) {
-  <div>
-    <div>Name:</div>
-    <div>{{ currentUser()?.displayName }}</div>
-  </div>
-  <div>
-    <div>Email:</div>
-    <div>{{ currentUser()?.email }}</div>
-  </div>
+<div>
+  <div>Name:</div>
+  <div>{{ currentUser()?.displayName }}</div>
+</div>
+<div>
+  <div>Email:</div>
+  <div>{{ currentUser()?.email }}</div>
+</div>
 } @else {
-  <div>Error. User not found.</div>
+<div>Error. User not found.</div>
 }
 
-<button (click)="signOut()">SignOut</button>
+<div>
+  @if (userDetails) {
+  <div>Receive messages?</div>
+  <input
+    type="checkbox"
+    [checked]="userDetails.details.receiveMessages"
+    (change)="inputChange($event)"
+    [disabled]="isLoading"
+  />
+  } @else {
+  <div>Loading details...</div>
+  }
+</div>
+
+<button (click)="signOut()" [disabled]="isLoading">SignOut</button>

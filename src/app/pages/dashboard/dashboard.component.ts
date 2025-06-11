@@ -15,6 +15,8 @@ export class DashboardComponent {
   firebaseMessagesSignal: Signal<MessagePayload | undefined>;
   isFirebaseMessagignActive: Signal<boolean | undefined>;
 
+  isLoading: boolean = false;
+
   constructor(
     private firebaseMessagingService: FirebaseMessagingService,
     private router: Router
@@ -29,18 +31,26 @@ export class DashboardComponent {
   }
 
   ngOnInit(): void {
-    if (this.isFirebaseMessagignActive && this.isFirebaseMessagignActive()) {
+    if (
+      this.isFirebaseMessagignActive &&
+      this.isFirebaseMessagignActive() &&
+      !this.firebaseMessagingService.isFirebaseMessagingInitialized
+    ) {
       this.subscribeToMessages();
     }
   }
 
-  subscribeToMessages(): void {
-    this.firebaseMessagingService.requestPermission();
+  async subscribeToMessages(): Promise<void> {
+    this.isLoading = true;
+    await this.firebaseMessagingService.requestPermission();
     this.firebaseMessagingService.listen();
+    this.isLoading = false;
   }
 
-  unsubscribeFromMessages(): void {
+  async unsubscribeFromMessages(): Promise<void> {
+    this.isLoading = true;
     this.firebaseMessagingService.deleteUserMessageSubscription();
+    this.isLoading = false;
   }
 
   navigateToProfile(): void {

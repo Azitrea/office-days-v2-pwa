@@ -4,11 +4,13 @@
 <section>
   <div>
     @if (isFirebaseMessagignActive()) {
-    <button (click)="unsubscribeFromMessages()">
+    <button (click)="unsubscribeFromMessages()" [disabled]="isLoading">
       Unsubscribe from messages
     </button>
     } @else {
-    <button (click)="subscribeToMessages()">Subscribe to messages</button>
+    <button (click)="subscribeToMessages()" [disabled]="isLoading">
+      Subscribe to messages
+    </button>
     }
   </div>
 
