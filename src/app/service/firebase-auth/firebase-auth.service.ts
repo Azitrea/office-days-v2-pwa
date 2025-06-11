@@ -16,12 +16,12 @@ import { FirebaseService } from '../firebase/firebase.service';
   providedIn: 'root',
 })
 export class FirebaseAuthService {
-  firebseService = inject(FirebaseService);
+  private firebseService = inject(FirebaseService);
 
-  private auth = getAuth(this.firebseService.getFirebaseApp());
+  private _auth = getAuth(this.firebseService.getFirebaseApp());
 
-  private userSubject = new BehaviorSubject<User | null | undefined>(undefined);
-  user$ = this.userSubject.asObservable();
+  private _userSubject = new BehaviorSubject<User | null | undefined>(undefined);
+  user$ = this._userSubject.asObservable();
 
   constructor() {
     this._initializeAuth();
@@ -30,7 +30,7 @@ export class FirebaseAuthService {
   async signInWithGoogle() {
     const provider = new GoogleAuthProvider();
     try {
-      const result = await signInWithPopup(this.auth, provider);
+      const result = await signInWithPopup(this._auth, provider);
       return result.user;
     } catch (error) {
       console.error('Google Sign-In failed:', error);
@@ -39,21 +39,21 @@ export class FirebaseAuthService {
   }
 
   async signOut() {
-    await signOut(this.auth);
+    await signOut(this._auth);
   }
 
   get currentUser() {
-    return this.auth.currentUser;
+    return this._auth.currentUser;
   }
 
   isAuthenticated(): boolean {
-    return !!this.auth.currentUser;
+    return !!this._auth.currentUser;
   }
 
   private async _initializeAuth(): Promise<void> {
-    await setPersistence(this.auth, browserLocalPersistence);
-    onAuthStateChanged(this.auth, (user) => {
-      this.userSubject.next(user);
+    await setPersistence(this._auth, browserLocalPersistence);
+    onAuthStateChanged(this._auth, (user) => {
+      this._userSubject.next(user);
     });
   }
 }
