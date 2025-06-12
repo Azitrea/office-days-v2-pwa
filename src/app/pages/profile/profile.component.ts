@@ -16,6 +16,8 @@ import { UserDetails, UserProfileData } from '../../model/user-details.model';
   styleUrl: './profile.component.scss',
 })
 export class ProfileComponent implements OnInit {
+  isFirebaseMessagignActive: Signal<boolean | undefined>;
+
   currentUser: Signal<User | null | undefined> | undefined;
   userDetails: UserProfileData | undefined;
 
@@ -28,10 +30,15 @@ export class ProfileComponent implements OnInit {
     private router: Router
   ) {
     this.currentUser = toSignal(this.firebaseAuthService.user$);
+    this.isFirebaseMessagignActive = toSignal(
+      this.firebaseMessagingService.isFirebaseMessagignActive()
+    );
   }
 
   ngOnInit(): void {
-    this.firebaseFirestoreService.getUserDetails().then((details) => {
+    const uid = this.firebaseAuthService.currentUser?.uid;
+    if (!uid) return;
+    this.firebaseFirestoreService.getUserDetails(uid).then((details) => {
       this.userDetails = details;
     });
   }
@@ -41,11 +48,12 @@ export class ProfileComponent implements OnInit {
   }
 
   async updateUserDetail(details: Partial<UserDetails>): Promise<void> {
-    if (this.isLoading) {
+    const uid = this.firebaseAuthService.currentUser?.uid;
+    if (this.isLoading || !uid) {
       return;
     }
     this.isLoading = true;
-    await this.firebaseFirestoreService.updateUserDetails(details);
+    await this.firebaseFirestoreService.updateUserDetails(uid, details);
     this.isLoading = false;
   }
 
@@ -54,10 +62,35 @@ export class ProfileComponent implements OnInit {
   }
 
   async signOut(): Promise<void> {
+    const uid = this.firebaseAuthService.currentUser?.uid;
+    if (!uid) {
+      return;
+    }
     this.isLoading = true;
-    await this.firebaseMessagingService.deleteUserMessageSubscription();
+    await this.firebaseMessagingService.deleteUserMessageSubscription(uid);
     await this.firebaseAuthService.signOut();
     this.router.navigateByUrl('/login');
+    this.isLoading = false;
+  }
+
+  async subscribeToMessages(): Promise<void> {
+    const uid = this.firebaseAuthService.currentUser?.uid;
+    if (!uid) {
+      return;
+    }
+    this.isLoading = true;
+    await this.firebaseMessagingService.requestPermission(uid);
+    this.firebaseMessagingService.listen();
+    this.isLoading = false;
+  }
+
+  async unsubscribeFromMessages(): Promise<void> {
+    const uid = this.firebaseAuthService.currentUser?.uid;
+    if (!uid) {
+      return;
+    }
+    this.isLoading = true;
+    this.firebaseMessagingService.deleteUserMessageSubscription(uid);
     this.isLoading = false;
   }
 }

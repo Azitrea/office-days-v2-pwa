@@ -24,7 +24,7 @@ export class LoginComponent {
     console.log(user);
 
     if (user) {
-      await this.firebaseFirestoreService.initializeUserIfFirstLogin();
+      await this.firebaseFirestoreService.initializeUserIfFirstLogin(user);
       this.router.navigateByUrl('');
     }
     this.isLoading = false;

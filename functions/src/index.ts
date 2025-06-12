@@ -1,57 +1,66 @@
-/**
- * Import function triggers from their respective submodules:
- *
- * import {onCall} from "firebase-functions/v2/https";
- * import {onDocumentWritten} from "firebase-functions/v2/firestore";
- *
- * See a full list of supported triggers at https://firebase.google.com/docs/functions
- */
-
-// import { onRequest } from 'firebase-functions/v2/https';
-// import * as logger from 'firebase-functions/logger';
-
-// Start writing functions
-// https://firebase.google.com/docs/functions/typescript
-
-// export const helloWorld = onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
-
-// functions/src/index.ts
 import * as functions from 'firebase-functions';
-import * as admin from 'firebase-admin';
+import { initializeApp } from 'firebase-admin/app';
+import { getMessaging, MulticastMessage } from 'firebase-admin/messaging';
+import { getFirestore } from 'firebase-admin/firestore';
 
-admin.initializeApp();
+initializeApp();
+const db = getFirestore();
+const messaging = getMessaging();
 
-export const sendPushNotification = functions.https.onCall(
-  async (data, _context) => {
+export const sendPushToUserIds = functions.https.onCall(
+  { region: 'europe-west3' },
+  async (data, context) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { token, title, body } = data as any;
+    const { userIds, title, body } = data as any;
 
-    if (!token || !title || !body) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if (!(context as any)?.auth) {
       throw new functions.https.HttpsError(
-        'invalid-argument',
-        'Missing fields'
+        'unauthenticated',
+        'User must be signed in'
       );
     }
 
-    const message = {
-      token,
-      notification: {
-        title,
-        body,
-      },
-    };
+    if (!Array.isArray(userIds) || !title || !body) {
+      throw new functions.https.HttpsError('invalid-argument', 'Invalid input');
+    }
+
+    const tokensToSend: string[] = [];
 
     try {
-      const response = await admin.messaging().send(message);
-      return { success: true, response };
+      for (const userId of userIds) {
+        const tokensSnapshot = await db
+          .collection(`users/${userId}/fcmTokens`)
+          .get();
+
+        tokensSnapshot.forEach((doc) => {
+          const tokenData = doc.data();
+          if (tokenData?.token) {
+            tokensToSend.push(tokenData.token);
+          }
+        });
+      }
+
+      if (tokensToSend.length === 0) {
+        return { successCount: 0, failureCount: 0, message: 'No tokens found' };
+      }
+
+      const message: MulticastMessage = {
+        notification: { title, body },
+        tokens: tokensToSend,
+      };
+
+      const response = await messaging.sendEachForMulticast(message);
+
+      return {
+        successCount: response.successCount,
+        failureCount: response.failureCount,
+      };
     } catch (error) {
-      console.error('Error sending push notification:', error);
+      console.error('Error sending notifications:', error);
       throw new functions.https.HttpsError(
         'internal',
-        'Failed to send push notification'
+        'Error sending notifications'
       );
     }
   }

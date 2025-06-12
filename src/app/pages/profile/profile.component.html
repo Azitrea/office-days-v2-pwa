@@ -1,5 +1,16 @@
 <p>profile works!</p>
 <button (click)="navigateToDashboard()">Navigate to dashboard</button>
+<div>
+  @if (isFirebaseMessagignActive()) {
+  <button (click)="unsubscribeFromMessages()" [disabled]="isLoading">
+    Unsubscribe from messages
+  </button>
+  } @else {
+  <button (click)="subscribeToMessages()" [disabled]="isLoading">
+    Subscribe to messages
+  </button>
+  }
+</div>
 @if (currentUser) {
 <div>
   <div>Name:</div>

@@ -43,7 +43,7 @@ export class FirebaseMessagingService {
     return this._messageSubject.asObservable();
   }
 
-  async requestPermission(): Promise<void> {
+  async requestPermission(userID: string): Promise<void> {
     const messaging = getMessaging();
 
     const currentToken = await getToken(messaging, {
@@ -55,7 +55,10 @@ export class FirebaseMessagingService {
     });
 
     if (currentToken) {
-      await this.firebaseFirestoreService.saveTokenToFirestore(currentToken);
+      await this.firebaseFirestoreService.saveTokenToFirestore(
+        userID,
+        currentToken
+      );
       this._setFirebaseMessagingStatus(true);
       this._isFirebaseMessagingInitialized.next(true);
     } else {
@@ -75,7 +78,7 @@ export class FirebaseMessagingService {
     });
   }
 
-  async deleteUserMessageSubscription(): Promise<void> {
+  async deleteUserMessageSubscription(userID: string): Promise<void> {
     if (!this._isFirebaseMessagingActive.value) {
       return;
     }
@@ -87,7 +90,10 @@ export class FirebaseMessagingService {
     });
 
     try {
-      await this.firebaseFirestoreService.deleteTokenFromFirestore(token);
+      await this.firebaseFirestoreService.deleteTokenFromFirestore(
+        userID,
+        token
+      );
       await deleteToken(messaging);
       if (this._messageUnsubscribeFunction) {
         this._messageUnsubscribeFunction();

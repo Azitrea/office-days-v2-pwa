@@ -1,19 +1,7 @@
 <p>dashboard works!</p>
 <button (click)="navigateToProfile()">Navigate to profile</button>
-
+<button (click)="sendMessage()" [disabled]="isLoading">SEND MESSAGE</button>
 <section>
-  <div>
-    @if (isFirebaseMessagignActive()) {
-    <button (click)="unsubscribeFromMessages()" [disabled]="isLoading">
-      Unsubscribe from messages
-    </button>
-    } @else {
-    <button (click)="subscribeToMessages()" [disabled]="isLoading">
-      Subscribe to messages
-    </button>
-    }
-  </div>
-
   <div>
     <div>Latest message:</div>
     @if (firebaseMessagesSignal()) {
