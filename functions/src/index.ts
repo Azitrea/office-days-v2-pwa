@@ -9,12 +9,12 @@ const messaging = getMessaging();
 
 export const sendPushToUserIds = functions.https.onCall(
   { region: 'europe-west3' },
-  async (data, context) => {
+  async (request) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { userIds, title, body } = data as any;
+    const { userIds, title, body } = request.data;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    if (!(context as any)?.auth) {
+    if (!request.auth) {
       throw new functions.https.HttpsError(
         'unauthenticated',
         'User must be signed in'

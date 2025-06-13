@@ -8,7 +8,10 @@ import { FirebaseService } from '../firebase/firebase.service';
 export class FirebaseFunctionsService {
   private firebseService = inject(FirebaseService);
 
-  _firebaseFunctions = getFunctions(this.firebseService.getFirebaseApp());
+  _firebaseFunctions = getFunctions(
+    this.firebseService.getFirebaseApp(),
+    'europe-west3'
+  );
 
   constructor() {}
 
@@ -25,7 +28,6 @@ export class FirebaseFunctionsService {
       'sendPushToUserIds'
     );
 
-    console.log('_firebaseFunctions', sendPush);
     try {
       const result = await sendPush({ userIds, title, body });
       console.log('Push sent:', result.data);
