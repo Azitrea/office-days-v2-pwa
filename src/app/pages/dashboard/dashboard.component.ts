@@ -69,8 +69,8 @@ export class DashboardComponent {
     const userIDs = this.allUsers.map((user) => user.id);
     await this.firebaseFunctions.sendNotificationToUsers(
       userIDs as string[],
-      'Test',
-      'TestBody'
+      'Cigi?',
+      `From: ${this.firebaseAuthService.currentUser?.displayName}`
     );
     this.isLoading = false;
   }

@@ -5,13 +5,11 @@ import {
   doc,
   getDoc,
   getDocs,
-  getDocsFromServer,
   setDoc,
   updateDoc,
 } from 'firebase/firestore';
 import { getFirestore } from 'firebase/firestore';
 import { FirebaseService } from '../firebase/firebase.service';
-import { FirebaseAuthService } from '../firebase-auth/firebase-auth.service';
 import { UserDetails, UserProfileData } from '../../model/user-details.model';
 import { User } from 'firebase/auth';
 

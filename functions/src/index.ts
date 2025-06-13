@@ -1,7 +1,7 @@
 import * as functions from 'firebase-functions';
 import { initializeApp } from 'firebase-admin/app';
 import { getMessaging, MulticastMessage } from 'firebase-admin/messaging';
-import { getFirestore } from 'firebase-admin/firestore';
+import { getFirestore, Timestamp } from 'firebase-admin/firestore';
 
 initializeApp();
 const db = getFirestore();
@@ -29,6 +29,17 @@ export const sendPushToUserIds = functions.https.onCall(
 
     try {
       for (const userId of userIds) {
+        const userRef = await db.doc(`users/${userId}`);
+        const docSnapshot = await userRef.get();
+        if (!docSnapshot.exists) {
+          continue;
+        }
+
+        const userDetail = docSnapshot.data() as UserProfileData;
+        if (!userDetail?.details.receiveMessages) {
+          continue;
+        }
+
         const tokensSnapshot = await db
           .collection(`users/${userId}/fcmTokens`)
           .get();
@@ -65,3 +76,13 @@ export const sendPushToUserIds = functions.https.onCall(
     }
   }
 );
+
+export interface UserProfileData {
+  id?: string;
+  createdAt: Timestamp;
+  details: UserDetails;
+}
+
+export interface UserDetails {
+  receiveMessages: boolean;
+}
