@@ -1,5 +1,9 @@
 import { inject, Injectable } from '@angular/core';
-import { getFunctions, httpsCallable } from 'firebase/functions';
+import {
+  getFunctions,
+  httpsCallable,
+  HttpsCallableResult,
+} from 'firebase/functions';
 import { FirebaseService } from '../firebase/firebase.service';
 
 @Injectable({
@@ -19,20 +23,16 @@ export class FirebaseFunctionsService {
     userIds: string[],
     title: string,
     body: string
-  ) {
+  ): Promise<HttpsCallableResult<Record<string, string | number | undefined>>> {
     if (userIds.length === 0) {
-      throw new Error('UserIDs are missing');
+      throw new Error('No users in the syste.');
     }
     const sendPush = httpsCallable(
       this._firebaseFunctions,
       'sendPushToUserIds'
     );
-
-    try {
-      const result = await sendPush({ userIds, title, body });
-      console.log('Push sent:', result.data);
-    } catch (error) {
-      console.error('Error sending push:', error);
-    }
+    return (await sendPush({ userIds, title, body })) as HttpsCallableResult<
+      Record<string, string | number | undefined>
+    >;
   }
 }

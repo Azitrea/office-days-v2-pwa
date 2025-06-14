@@ -12,11 +12,19 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
-
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, MatButtonModule, MatCardModule, MatProgressSpinnerModule, MatIconModule],
+  imports: [
+    CommonModule,
+    MatButtonModule,
+    MatCardModule,
+    MatProgressSpinnerModule,
+    MatIconModule,
+    MatSnackBarModule,
+  ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
 })
@@ -33,6 +41,7 @@ export class DashboardComponent {
     private firebaseAuthService: FirebaseAuthService,
     private firebaseFirestore: FirebaseFirestoreService,
     private firebaseFunctions: FirebaseFunctionsService,
+    private snackBar: MatSnackBar,
     private router: Router
   ) {
     this.firebaseMessagesSignal = toSignal(
@@ -71,12 +80,30 @@ export class DashboardComponent {
 
   async sendMessage(): Promise<void> {
     this.isLoading = true;
-    const userIDs = this.allUsers.map((user) => user.id);
-    await this.firebaseFunctions.sendNotificationToUsers(
-      userIDs as string[],
-      'Cigi?',
-      `From: ${this.firebaseAuthService.currentUser?.displayName}`
-    );
-    this.isLoading = false;
+
+    try {
+      const userIDs = this.allUsers.map((user) => user.id);
+      const result = await this.firebaseFunctions.sendNotificationToUsers(
+        userIDs as string[],
+        'Cigi?',
+        `From: ${this.firebaseAuthService.currentUser?.displayName}`
+      );
+
+      this.isLoading = false;
+      this.showSnack('Successfully sent notification');
+      console.log('Push sent:', result.data);
+    } catch (error) {
+      console.error('Error sending push:', error);
+      this.showSnack('Failed to send notification', true);
+    }
+  }
+
+  showSnack(message: string, isError: boolean = false) {
+    this.snackBar.open(message, 'Close', {
+      duration: 2000,
+      panelClass: isError
+        ? ['bg-red-600', 'text-white']
+        : ['bg-green-600', 'text-white'],
+    });
   }
 }
