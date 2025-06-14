@@ -1,16 +1,20 @@
 <div class="relative p-4 max-w-xl mx-auto text-gray-800">
-  <!-- Settings Icon Button (top-right corner) -->
-  <button
-    mat-icon-button
-    aria-label="Settings"
-    (click)="navigateToProfile()"
-    class="absolute top-4 right-4 !flex z-10 text-gray-600 hover:text-blue-600"
-  >
-    <mat-icon>settings</mat-icon>
-  </button>
+  <div class="relative h-10 mb-10 flex justify-center items-center">
+    <!-- Settings Icon Button (top-right corner) -->
+    <div class="absolute right-4 z-10">
+      <button
+        mat-icon-button
+        aria-label="Settings"
+        (click)="navigateToProfile()"
+        class="!flex text-gray-600 hover:text-blue-600"
+      >
+        <mat-icon>settings</mat-icon>
+      </button>
+    </div>
 
-  <!-- Title -->
-  <h1 class="text-2xl font-semibold text-center mb-6">Dashboard</h1>
+    <!-- Title -->
+    <h1 class="text-2xl font-semibold text-center">Dashboard</h1>
+  </div>
 
   <!-- Action Buttons -->
   <div class="flex flex-col sm:flex-row sm:justify-center gap-4 mb-6">
@@ -28,7 +32,7 @@
         color="warn"
         class="!inline-block !align-middle"
       ></mat-progress-spinner>
-      <span>{{ isLoading ? "Sending..." : "Send Message" }}</span>
+      <span>{{ isLoading ? "Sending..." : "Send Notification" }}</span>
     </button>
   </div>
 

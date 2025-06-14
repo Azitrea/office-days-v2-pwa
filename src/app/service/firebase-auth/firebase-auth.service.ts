@@ -29,13 +29,8 @@ export class FirebaseAuthService {
 
   async signInWithGoogle() {
     const provider = new GoogleAuthProvider();
-    try {
-      const result = await signInWithPopup(this._auth, provider);
-      return result.user;
-    } catch (error) {
-      console.error('Google Sign-In failed:', error);
-      throw error;
-    }
+    const result = await signInWithPopup(this._auth, provider);
+    return result.user;
   }
 
   async signOut() {

@@ -14,6 +14,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 })
 export class LoginComponent {
   isLoading: boolean = false;
+  errorMessage: string | undefined;
 
   constructor(
     private firebaseAuthService: FirebaseAuthService,
@@ -22,14 +23,21 @@ export class LoginComponent {
   ) {}
 
   async signInWithGoogle(): Promise<void> {
-    this.isLoading = true;
-    const user = await this.firebaseAuthService.signInWithGoogle();
-    console.log(user);
+    this.errorMessage = undefined;
+    try {
+      this.isLoading = true;
+      const user = await this.firebaseAuthService.signInWithGoogle();
+      console.log(user);
 
-    if (user) {
-      await this.firebaseFirestoreService.initializeUserIfFirstLogin(user);
-      this.router.navigateByUrl('');
+      if (user) {
+        await this.firebaseFirestoreService.initializeUserIfFirstLogin(user);
+        this.router.navigateByUrl('');
+      }
+      this.isLoading = false;
+    } catch (error) {
+      this.isLoading = false;
+      console.error('Google Sign-In failed:', error);
+      this.errorMessage = (error as Error).message;
     }
-    this.isLoading = false;
   }
 }
