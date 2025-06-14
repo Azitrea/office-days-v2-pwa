@@ -1,13 +1,49 @@
-<p>dashboard works!</p>
-<button (click)="navigateToProfile()">Navigate to profile</button>
-<button (click)="sendMessage()" [disabled]="isLoading">SEND MESSAGE</button>
-<section>
-  <div>
-    <div>Latest message:</div>
-    @if (firebaseMessagesSignal()) {
-    <div>{{ firebaseMessagesSignal() | json }}</div>
-    } @else {
-    <div>None</div>
-    }
+<div class="relative p-4 max-w-xl mx-auto text-gray-800">
+  <!-- Settings Icon Button (top-right corner) -->
+  <button
+    mat-icon-button
+    aria-label="Settings"
+    (click)="navigateToProfile()"
+    class="absolute top-4 right-4 !flex z-10 text-gray-600 hover:text-blue-600"
+  >
+    <mat-icon>settings</mat-icon>
+  </button>
+
+  <!-- Title -->
+  <h1 class="text-2xl font-semibold text-center mb-6">Dashboard</h1>
+
+  <!-- Action Buttons -->
+  <div class="flex flex-col sm:flex-row sm:justify-center gap-4 mb-6">
+    <button
+      mat-raised-button
+      color="accent"
+      (click)="sendMessage()"
+      [disabled]="isLoading"
+      class="w-full sm:w-auto flex items-center justify-center gap-2"
+    >
+      <mat-progress-spinner
+        *ngIf="isLoading"
+        diameter="20"
+        mode="indeterminate"
+        color="warn"
+        class="!inline-block !align-middle"
+      ></mat-progress-spinner>
+      <span>{{ isLoading ? "Sending..." : "Send Message" }}</span>
+    </button>
   </div>
-</section>
+
+  <!-- Latest Message Display -->
+  <mat-card class="bg-white shadow-md p-4 rounded-xl">
+    <h2 class="text-lg font-medium mb-2">Latest Message:</h2>
+
+    @if (firebaseMessagesSignal()) {
+    <pre
+      class="bg-gray-100 p-3 rounded text-sm overflow-auto whitespace-pre-wrap"
+      >{{ firebaseMessagesSignal() | json }}
+      </pre
+    >
+    } @else {
+    <div class="text-gray-500">None</div>
+    }
+  </mat-card>
+</div>

@@ -8,10 +8,22 @@ import { FirebaseFirestoreService } from '../../service/firebase-firestore/fireb
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UserDetails, UserProfileData } from '../../model/user-details.model';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSlideToggleChange, MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 @Component({
   selector: 'app-profile',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatButtonModule,
+    MatCardModule,
+    MatIconModule,
+    MatSlideToggleModule,
+  ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss',
 })
@@ -43,8 +55,8 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  inputChange(event: any): void {
-    this.updateUserDetail({ receiveMessages: event.target.checked });
+  inputChange(event: MatSlideToggleChange): void {
+    this.updateUserDetail({ receiveMessages: event.checked });
   }
 
   async updateUserDetail(details: Partial<UserDetails>): Promise<void> {

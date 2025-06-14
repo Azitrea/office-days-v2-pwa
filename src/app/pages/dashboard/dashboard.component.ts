@@ -8,10 +8,15 @@ import { FirebaseFirestoreService } from '../../service/firebase-firestore/fireb
 import { FirebaseAuthService } from '../../service/firebase-auth/firebase-auth.service';
 import { FirebaseFunctionsService } from '../../service/firebase-functions/firebase-functions.service';
 import { UserProfileData } from '../../model/user-details.model';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatIconModule } from '@angular/material/icon';
+
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule],
+  imports: [CommonModule, MatButtonModule, MatCardModule, MatProgressSpinnerModule, MatIconModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
 })

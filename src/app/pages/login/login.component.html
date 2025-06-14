@@ -1,3 +1,37 @@
-<p>login works!</p>
+<div
+  class="min-h-screen flex flex-col justify-center items-center p-6 bg-gray-100 text-center"
+>
+  <mat-card class="w-full max-w-sm p-6 rounded-xl shadow-md">
+    <mat-card-title class="text-xl font-semibold mb-4">Sign in</mat-card-title>
+    <mat-card-subtitle class="mb-6 text-gray-600"
+      >Use your Google account to continue</mat-card-subtitle
+    >
 
-<button (click)="signInWithGoogle()" [disabled]="isLoading">SignInWithGoogle</button>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="signInWithGoogle()"
+      [disabled]="isLoading"
+      class="w-full flex items-center justify-center gap-3 bg-white text-gray-700 hover:bg-gray-100"
+    >
+      <!-- Google logo (inline SVG) -->
+      <img
+        src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+        alt="Google Logo"
+        class="h-5 w-5"
+      />
+
+      <mat-progress-spinner
+        *ngIf="isLoading"
+        diameter="20"
+        mode="indeterminate"
+        color="primary"
+        class="!inline-block !align-middle"
+      ></mat-progress-spinner>
+
+      @if (!isLoading) {
+        <span>Sign in with Google</span>
+      }
+    </button>
+  </mat-card>
+</div>

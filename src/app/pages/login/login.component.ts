@@ -2,10 +2,13 @@ import { Component } from '@angular/core';
 import { FirebaseAuthService } from '../../service/firebase-auth/firebase-auth.service';
 import { Router } from '@angular/router';
 import { FirebaseFirestoreService } from '../../service/firebase-firestore/firebase-firestore.service';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-login',
-  imports: [],
+  imports: [MatCardModule, MatButtonModule, MatProgressSpinnerModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
