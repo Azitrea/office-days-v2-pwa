@@ -23,16 +23,19 @@
       color="accent"
       (click)="sendMessage()"
       [disabled]="isLoading"
-      class="w-full sm:w-auto flex items-center justify-center gap-2"
+      class="w-full sm:w-auto"
     >
-      <mat-progress-spinner
-        *ngIf="isLoading"
-        diameter="20"
-        mode="indeterminate"
-        color="warn"
-        class="!inline-block !align-middle"
-      ></mat-progress-spinner>
-      <span>{{ isLoading ? "Sending..." : "Send Notification" }}</span>
+      <div class="flex items-center justify-center gap-2">
+        @if (isLoading) {
+        <mat-progress-spinner
+          diameter="20"
+          mode="indeterminate"
+          color="warn"
+          class="!inline-block !align-middle"
+        ></mat-progress-spinner>
+        }
+        <span>{{ isLoading ? "Sending..." : "Send Notification" }}</span>
+      </div>
     </button>
   </div>
 
