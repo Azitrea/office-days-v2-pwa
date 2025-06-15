@@ -41,9 +41,9 @@
 
   <!-- Latest Message Display -->
   <mat-card class="bg-white shadow-md p-4 rounded-xl">
-    <h2 class="text-lg font-medium mb-2">Latest Message:</h2>
+    <h2 class="text-lg font-medium mb-2">Latest Messages:</h2>
 
-    @if (firebaseMessagesSignal()) {
+    <!-- @if (firebaseMessagesSignal()) {
     <pre
       class="bg-gray-100 p-3 rounded text-sm overflow-auto whitespace-pre-wrap"
       >{{ firebaseMessagesSignal() | json }}
@@ -51,6 +51,33 @@
     >
     } @else {
     <div class="text-gray-500">None</div>
+    } -->
+
+    @if (!latestMessages) {
+    <div class="w-full py-8 flex justify-center items-center">
+      <div class="loader"></div>
+    </div>
     }
+
+    <div class="grid gap-4 md:grid-cols-1">
+      @for (msg of latestMessages; track msg.id) {
+      <mat-card class="p-4 shadow-sm rounded-xl" appearance="outlined">
+        <div class="flex justify-between items-center mb-2">
+          <h3 class="text-lg font-semibold text-gray-800">{{ msg.title }}</h3>
+          <span class="text-xs text-gray-400">
+            {{ msg.createdAt.toDate() | date: "YYYY-MM-dd hh:mm z" }}
+          </span>
+        </div>
+
+        <p class="text-sm text-gray-700 mb-4 whitespace-pre-wrap">
+          {{ msg.body }}
+        </p>
+
+        <div class="text-right text-xs text-gray-500 italic">
+          — {{ msg.displayName || "Unknown user" }}
+        </div>
+      </mat-card>
+      }
+    </div>
   </mat-card>
 </div>

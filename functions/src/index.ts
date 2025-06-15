@@ -28,6 +28,21 @@ export const sendPushToUserIds = functions.https.onCall(
     const tokensToSend: string[] = [];
 
     try {
+      const messageLogs: {
+        userId: string;
+        title: string;
+        body: string;
+        createdAt: Date;
+      } = {
+        userId: request.auth.uid,
+        title,
+        body,
+        createdAt: new Date(),
+      };
+
+      const ref = db.collection('messageLogs').doc();
+      ref.set(messageLogs);
+
       for (const userId of userIds) {
         const userRef = await db.doc(`users/${userId}`);
         const docSnapshot = await userRef.get();

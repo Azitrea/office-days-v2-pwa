@@ -5,13 +5,18 @@ import {
   doc,
   getDoc,
   getDocs,
+  limit,
+  orderBy,
+  query,
   setDoc,
   updateDoc,
+  where,
 } from 'firebase/firestore';
 import { getFirestore } from 'firebase/firestore';
 import { FirebaseService } from '../firebase/firebase.service';
 import { UserDetails, UserProfileData } from '../../model/user-details.model';
 import { User } from 'firebase/auth';
+import { FirebseStoredMessage } from '../../model/messages.model';
 
 @Injectable({
   providedIn: 'root',
@@ -120,5 +125,33 @@ export class FirebaseFirestoreService {
           ...doc.data(),
         } as UserProfileData)
     );
+  }
+
+  async getLatestMessages(): Promise<any> {
+    const messageLogsRef = collection(this._firestore, 'messageLogs');
+    const q = query(messageLogsRef, orderBy('createdAt', 'desc'), limit(10));
+
+    const querySnapshot = await getDocs(q);
+    const messages = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as FirebseStoredMessage[];
+
+    const array = messages.map((msg) => msg.userId);
+    const userRef = await collection(this._firestore, 'users');
+    const userQuery = query(userRef, where('__name__', 'in', array));
+
+    const users = (await getDocs(userQuery)).docs.map(
+      (doc) =>
+        ({
+          id: doc.id,
+          ...doc.data(),
+        } as UserProfileData)
+    );
+
+    return messages.map((msg) => ({
+      ...msg,
+      displayName: users.find((u) => msg.userId === u.id)?.displayName ?? msg.userId,
+    }));
   }
 }

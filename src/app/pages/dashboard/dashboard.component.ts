@@ -14,6 +14,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { FirebseStoredMessage } from '../../model/messages.model';
 
 @Component({
   selector: 'app-dashboard',
@@ -35,6 +36,7 @@ export class DashboardComponent {
   isLoading: boolean = false;
 
   allUsers: UserProfileData[] = [];
+  latestMessages: FirebseStoredMessage[] | undefined = undefined;
 
   constructor(
     private firebaseMessagingService: FirebaseMessagingService,
@@ -63,6 +65,9 @@ export class DashboardComponent {
     }
 
     this.firebaseFirestore.getAllUsers().then((res) => (this.allUsers = res));
+    this.firebaseFirestore
+      .getLatestMessages()
+      .then((res) => (this.latestMessages = res));
   }
 
   private async _subscribeToMessages(): Promise<void> {

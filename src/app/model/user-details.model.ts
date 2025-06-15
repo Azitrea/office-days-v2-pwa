@@ -4,6 +4,7 @@ export interface UserProfileData {
   id?: string;
   createdAt: Timestamp;
   details: UserDetails;
+  displayName: string;
 }
 
 export interface UserDetails {
