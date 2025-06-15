@@ -7,7 +7,6 @@ import { Router } from '@angular/router';
 import { FirebaseFirestoreService } from '../../service/firebase-firestore/firebase-firestore.service';
 import { FirebaseAuthService } from '../../service/firebase-auth/firebase-auth.service';
 import { FirebaseFunctionsService } from '../../service/firebase-functions/firebase-functions.service';
-import { UserProfileData } from '../../model/user-details.model';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -15,6 +14,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { FirebseStoredMessage } from '../../model/messages.model';
+import { UserProfileData } from '../../model/user-details.model';
 
 @Component({
   selector: 'app-dashboard',
@@ -35,8 +35,8 @@ export class DashboardComponent {
 
   isLoading: boolean = false;
 
-  allUsers: UserProfileData[] = [];
-  latestMessages: FirebseStoredMessage[] | undefined = undefined;
+  allUsers: Signal<UserProfileData[] | undefined>;
+  latestMessages: Signal<FirebseStoredMessage[] | undefined>;
 
   constructor(
     private firebaseMessagingService: FirebaseMessagingService,
@@ -53,6 +53,14 @@ export class DashboardComponent {
     this.isFirebaseMessagignActive = toSignal(
       this.firebaseMessagingService.isFirebaseMessagignActive()
     );
+
+    this.allUsers = toSignal(
+      this.firebaseFirestore.firestoreAllUsers.asObservable()
+    );
+
+    this.latestMessages = toSignal(
+      this.firebaseFirestore.firestoreLatestMessages.asObservable()
+    );
   }
 
   ngOnInit(): void {
@@ -64,10 +72,8 @@ export class DashboardComponent {
       this._subscribeToMessages();
     }
 
-    this.firebaseFirestore.getAllUsers().then((res) => (this.allUsers = res));
-    this.firebaseFirestore
-      .getLatestMessages()
-      .then((res) => (this.latestMessages = res));
+    this.firebaseFirestore.getAllUsers();
+    this.firebaseFirestore.getLatestMessages();
   }
 
   private async _subscribeToMessages(): Promise<void> {
@@ -87,7 +93,7 @@ export class DashboardComponent {
     this.isLoading = true;
 
     try {
-      const userIDs = this.allUsers.map((user) => user.id);
+      const userIDs = this.allUsers()?.map((user) => user.id) ?? [];
       const result = await this.firebaseFunctions.sendNotificationToUsers(
         userIDs as string[],
         'Cigi?',

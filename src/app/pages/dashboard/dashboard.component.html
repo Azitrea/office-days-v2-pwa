@@ -2,12 +2,8 @@
   <div class="relative h-10 mb-10 flex justify-center items-center">
     <!-- Settings Icon Button (top-right corner) -->
     <div class="absolute right-4 z-10">
-      <button
-        mat-icon-button
-        aria-label="Settings"
-        (click)="navigateToProfile()"
-        class="!flex text-gray-600 hover:text-blue-600"
-      >
+      <button mat-icon-button aria-label="Settings" (click)="navigateToProfile()"
+        class="!flex text-gray-600 hover:text-blue-600">
         <mat-icon>settings</mat-icon>
       </button>
     </div>
@@ -18,21 +14,11 @@
 
   <!-- Action Buttons -->
   <div class="flex flex-col sm:flex-row sm:justify-center gap-4 mb-6">
-    <button
-      mat-raised-button
-      color="accent"
-      (click)="sendMessage()"
-      [disabled]="isLoading"
-      class="w-full sm:w-auto"
-    >
+    <button mat-raised-button color="accent" (click)="sendMessage()" [disabled]="isLoading" class="w-full sm:w-auto">
       <div class="flex items-center justify-center gap-2">
         @if (isLoading) {
-        <mat-progress-spinner
-          diameter="20"
-          mode="indeterminate"
-          color="warn"
-          class="!inline-block !align-middle"
-        ></mat-progress-spinner>
+        <mat-progress-spinner diameter="20" mode="indeterminate" color="warn"
+          class="!inline-block !align-middle"></mat-progress-spinner>
         }
         <span>{{ isLoading ? "Sending..." : "Send Notification" }}</span>
       </div>
@@ -53,30 +39,34 @@
     <div class="text-gray-500">None</div>
     } -->
 
-    @if (!latestMessages) {
+    @if (!latestMessages()) {
     <div class="w-full py-8 flex justify-center items-center">
       <div class="loader"></div>
     </div>
     }
 
     <div class="grid gap-4 md:grid-cols-1">
-      @for (msg of latestMessages; track msg.id) {
-      <mat-card class="p-4 shadow-sm rounded-xl" appearance="outlined">
-        <div class="flex justify-between items-center mb-2">
-          <h3 class="text-lg font-semibold text-gray-800">{{ msg.title }}</h3>
-          <span class="text-xs text-gray-400">
-            {{ msg.createdAt.toDate() | date: "YYYY-MM-dd hh:mm z" }}
-          </span>
-        </div>
+      @for (msg of latestMessages(); track msg.id) {
+        <mat-card class="p-4 shadow-sm rounded-xl" appearance="outlined">
+          <div class="flex justify-between items-center mb-2">
+            <h3 class="text-lg font-semibold text-gray-800">{{ msg.title }}</h3>
+            <span class="text-xs text-gray-400">
+              {{ msg.createdAt.toDate() | date: "YYYY-MM-dd hh:mm z" }}
+            </span>
+          </div>
 
-        <p class="text-sm text-gray-700 mb-4 whitespace-pre-wrap">
-          {{ msg.body }}
-        </p>
+          <p class="text-sm text-gray-700 mb-4 whitespace-pre-wrap">
+            {{ msg.body }}
+          </p>
 
-        <div class="text-right text-xs text-gray-500 italic">
-          — {{ msg.displayName || "Unknown user" }}
+          <div class="text-right text-xs text-gray-500 italic">
+            — {{ msg.displayName || "Unknown user" }}
+          </div>
+        </mat-card>
+      } @empty {
+        <div class="w-full py-8 flex justify-center items-center">
+          <div class="text-xs text-gray-400">Empty</div>
         </div>
-      </mat-card>
       }
     </div>
   </mat-card>
