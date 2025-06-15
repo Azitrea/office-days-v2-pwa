@@ -28,12 +28,12 @@ import { MatSlideToggleChange, MatSlideToggleModule } from '@angular/material/sl
   styleUrl: './profile.component.scss',
 })
 export class ProfileComponent implements OnInit {
+  isLoading: boolean = false;
   isFirebaseMessagignActive: Signal<boolean | undefined>;
 
   currentUser: Signal<User | null | undefined> | undefined;
   userDetails: UserProfileData | undefined;
 
-  isLoading: boolean = false;
 
   constructor(
     private firebaseAuthService: FirebaseAuthService,

@@ -7,6 +7,8 @@ initializeApp();
 const db = getFirestore();
 const messaging = getMessaging();
 
+const DELAY_BETWEEN_MESSAGES = 5;
+
 export const sendPushToUserIds = functions.https.onCall(
   { region: 'europe-west3' },
   async (request) => {
@@ -21,8 +23,37 @@ export const sendPushToUserIds = functions.https.onCall(
       );
     }
 
-    if (!Array.isArray(userIds) || !title || !body) {
+    if ((!Array.isArray(userIds) && userIds !== '*') || !title || !body) {
       throw new functions.https.HttpsError('invalid-argument', 'Invalid input');
+    }
+
+    const recentMsgSnap = await db
+      .collection('messageLogs')
+      .orderBy('createdAt', 'desc')
+      .limit(1)
+      .get();
+
+    const recentMessage = recentMsgSnap.docs[0]?.data();
+    const now = Timestamp.now();
+    const fiveMinutesAgo = Timestamp.fromMillis(
+      now.toMillis() - DELAY_BETWEEN_MESSAGES * 60 * 1000
+    );
+
+    if (
+      recentMessage &&
+      !recentMsgSnap.empty &&
+      recentMessage.createdAt.toMillis() > fiveMinutesAgo.toMillis()
+    ) {
+      const nextTime = Timestamp.fromMillis(
+        recentMessage.createdAt.toMillis() + DELAY_BETWEEN_MESSAGES * 60 * 1000
+      );
+      throw new functions.https.HttpsError(
+        'resource-exhausted',
+        `Notifications can only be sent every ${DELAY_BETWEEN_MESSAGES} minutes`,
+        {
+          nextMessageCanBeSent: nextTime,
+        }
+      );
     }
 
     const tokensToSend: string[] = [];
@@ -43,7 +74,12 @@ export const sendPushToUserIds = functions.https.onCall(
       const ref = db.collection('messageLogs').doc();
       ref.set(messageLogs);
 
-      for (const userId of userIds) {
+      const localUserIDs =
+        userIds === '*'
+          ? (await db.collection('users').get()).docs.map((doc) => doc.id)
+          : userIds;
+
+      for (const userId of localUserIDs) {
         const userRef = await db.doc(`users/${userId}`);
         const docSnapshot = await userRef.get();
         if (!docSnapshot.exists) {

@@ -163,6 +163,11 @@ export class FirebaseFirestoreService {
       ...doc.data(),
     })) as FirebseStoredMessage[];
 
+    if (messages.length === 0) {
+      this.firestoreLatestMessages.next([]);
+      return [];
+    }
+
     const array = messages.map((msg) => msg.userId);
     const userRef = await collection(this._firestore, 'users');
     const userQuery = query(userRef, where('__name__', 'in', array));

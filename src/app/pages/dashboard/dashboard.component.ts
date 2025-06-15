@@ -1,8 +1,6 @@
 import { Component, Signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { MessagePayload } from 'firebase/messaging';
 import { CommonModule } from '@angular/common';
-import { FirebaseMessagingService } from '../../service/firebase-messaging/firebase-messaging.service';
 import { Router } from '@angular/router';
 import { FirebaseFirestoreService } from '../../service/firebase-firestore/firebase-firestore.service';
 import { FirebaseAuthService } from '../../service/firebase-auth/firebase-auth.service';
@@ -15,6 +13,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { FirebseStoredMessage } from '../../model/messages.model';
 import { UserProfileData } from '../../model/user-details.model';
+import { FirebaseError } from 'firebase/app';
+import { Timestamp } from 'firebase/firestore';
 
 @Component({
   selector: 'app-dashboard',
@@ -30,30 +30,20 @@ import { UserProfileData } from '../../model/user-details.model';
   styleUrl: './dashboard.component.scss',
 })
 export class DashboardComponent {
-  firebaseMessagesSignal: Signal<MessagePayload | undefined>;
-  isFirebaseMessagignActive: Signal<boolean | undefined>;
-
   isLoading: boolean = false;
 
   allUsers: Signal<UserProfileData[] | undefined>;
   latestMessages: Signal<FirebseStoredMessage[] | undefined>;
 
+  errorMessage: Record<string, string> | undefined;
+
   constructor(
-    private firebaseMessagingService: FirebaseMessagingService,
     private firebaseAuthService: FirebaseAuthService,
     private firebaseFirestore: FirebaseFirestoreService,
     private firebaseFunctions: FirebaseFunctionsService,
     private snackBar: MatSnackBar,
     private router: Router
   ) {
-    this.firebaseMessagesSignal = toSignal(
-      this.firebaseMessagingService.getMessagePayloadObservable()
-    );
-
-    this.isFirebaseMessagignActive = toSignal(
-      this.firebaseMessagingService.isFirebaseMessagignActive()
-    );
-
     this.allUsers = toSignal(
       this.firebaseFirestore.firestoreAllUsers.asObservable()
     );
@@ -64,25 +54,8 @@ export class DashboardComponent {
   }
 
   ngOnInit(): void {
-    if (
-      this.isFirebaseMessagignActive &&
-      this.isFirebaseMessagignActive() &&
-      !this.firebaseMessagingService.isFirebaseMessagingInitialized
-    ) {
-      this._subscribeToMessages();
-    }
-
     this.firebaseFirestore.getAllUsers();
     this.firebaseFirestore.getLatestMessages();
-  }
-
-  private async _subscribeToMessages(): Promise<void> {
-    const uid = this.firebaseAuthService.currentUser?.uid;
-    if (!uid) {
-      return;
-    }
-    await this.firebaseMessagingService.requestPermission(uid);
-    this.firebaseMessagingService.listen();
   }
 
   navigateToProfile(): void {
@@ -90,12 +63,13 @@ export class DashboardComponent {
   }
 
   async sendMessage(): Promise<void> {
+    this.errorMessage = undefined;
     this.isLoading = true;
 
     try {
-      const userIDs = this.allUsers()?.map((user) => user.id) ?? [];
+      // const userIDs = this.allUsers()?.map((user) => user.id) ?? [];
       const result = await this.firebaseFunctions.sendNotificationToUsers(
-        userIDs as string[],
+        '*', // userIDs as string[],
         'Cigi?',
         `From: ${this.firebaseAuthService.currentUser?.displayName}`
       );
@@ -104,7 +78,21 @@ export class DashboardComponent {
       this.showSnack('Successfully sent notification');
       console.log('Push sent:', result.data);
     } catch (error) {
-      console.error('Error sending push:', error);
+      this.isLoading = false;
+      const err = error as FirebaseError;
+
+      this.errorMessage = { message: err.message };
+      if (
+        err.code === 'functions/resource-exhausted' &&
+        (err as any).details?.nextMessageCanBeSent !== undefined
+      ) {
+        const timeStamp = (err as any).details.nextMessageCanBeSent;
+        const time = new Timestamp(timeStamp._seconds, timeStamp._nanoseconds);
+
+        this.errorMessage['nextMessageCanBeSent'] = time.toDate().toString();
+      }
+
+      console.error('Error sending push:', error, err.code);
       this.showSnack('Failed to send notification', true);
     }
   }

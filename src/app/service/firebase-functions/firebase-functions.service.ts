@@ -20,7 +20,7 @@ export class FirebaseFunctionsService {
   constructor() {}
 
   async sendNotificationToUsers(
-    userIds: string[],
+    userIds: string[] | '*',
     title: string,
     body: string
   ): Promise<HttpsCallableResult<Record<string, string | number | undefined>>> {

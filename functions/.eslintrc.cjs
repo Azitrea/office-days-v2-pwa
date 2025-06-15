@@ -23,10 +23,7 @@ module.exports = {
     '/lib/**/*', // Ignore built files.
     '/generated/**/*', // Ignore generated files.
   ],
-  plugins: [
-    '@typescript-eslint',
-    'import',
-  ],
+  plugins: ['@typescript-eslint', 'import'],
   rules: {
     'quotes': ['error', 'single'],
     'import/no-unresolved': 0,
@@ -35,14 +32,16 @@ module.exports = {
     '@typescript-eslint/no-unused-vars': [
       'error',
       {
-        'args': 'all',
-        'argsIgnorePattern': '^_',
-        'caughtErrors': 'all',
-        'caughtErrorsIgnorePattern': '^_',
-        'destructuredArrayIgnorePattern': '^_',
-        'varsIgnorePattern': '^_',
-        'ignoreRestSiblings': true,
+        args: 'all',
+        argsIgnorePattern: '^_',
+        caughtErrors: 'all',
+        caughtErrorsIgnorePattern: '^_',
+        destructuredArrayIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+        ignoreRestSiblings: true,
       },
     ],
+    'max-len': ['warn', { code: 160 }],
+    'operator-linebreak': ['error', 'after', { 'overrides': { '?': 'before', ':': 'before' } }],
   },
 };

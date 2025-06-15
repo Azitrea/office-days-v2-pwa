@@ -9,7 +9,9 @@ import { environment } from '../../../environments/environment';
 export class FirebaseService {
   private _app: FirebaseApp | undefined;
 
-  constructor() {}
+  constructor() {
+    this.initializeFirebase();
+  }
 
   initializeFirebase(): void {
     // Initialize Firebase

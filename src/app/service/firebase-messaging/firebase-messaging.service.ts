@@ -39,6 +39,10 @@ export class FirebaseMessagingService {
     return this._isFirebaseMessagingActive.asObservable();
   }
 
+  isFirebaseMessagignActiveValue(): boolean {
+    return this._isFirebaseMessagingActive.value;
+  }
+
   getMessagePayloadObservable(): Observable<MessagePayload> {
     return this._messageSubject.asObservable();
   }
