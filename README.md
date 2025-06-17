@@ -6,3 +6,4 @@ This project was generated using [Angular CLI](https://github.com/angular/angula
 - https://office-days-v2.web.app
 
 Deploy: `firebase deploy --only hosting`
+Functions: `firebase deploy --only functions`
