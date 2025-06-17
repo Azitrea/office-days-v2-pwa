@@ -48,17 +48,6 @@ export class AppComponent implements OnInit {
         console.log('payload', _msg);
         this._openDialog(_msg);
       });
-
-    const test = {
-      from: '902123464873',
-      messageId: 'e102703e-eaac-4fa1-8f04-18a0b5ddcd24',
-      notification: {
-        title: 'Cigi?',
-        body: 'From: Dominik Zabari',
-      },
-    } as MessagePayload;
-
-    this._openDialog(test);
   }
 
   private async _subscribeToMessages(): Promise<void> {
@@ -80,9 +69,7 @@ export class AppComponent implements OnInit {
   private _openDialog(_msg: MessagePayload): void {
     this.dialog.closeAll();
 
-    let dialogRef = this.dialog.open(NewMessageComponent, {
-
-    });
+    let dialogRef = this.dialog.open(NewMessageComponent);
 
     dialogRef.componentInstance.title = _msg.notification?.title;
     dialogRef.componentInstance.body = _msg.notification?.body;
