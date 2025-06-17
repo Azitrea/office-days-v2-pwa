@@ -7,7 +7,7 @@ initializeApp();
 const db = getFirestore();
 const messaging = getMessaging();
 
-const DELAY_BETWEEN_MESSAGES = 5;
+const DELAY_BETWEEN_MESSAGES = 3;
 
 export const sendPushToUserIds = functions.https.onCall(
   { region: 'europe-west3' },

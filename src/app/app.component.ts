@@ -6,10 +6,13 @@ import { distinctUntilChanged, filter } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FirebaseMessagingService } from './service/firebase-messaging/firebase-messaging.service';
 import { FirebaseFirestoreService } from './service/firebase-firestore/firebase-firestore.service';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { NewMessageComponent } from './components/new-message/new-message.component';
+import { MessagePayload } from 'firebase/messaging';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, CommonModule],
+  imports: [RouterOutlet, CommonModule, MatDialogModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
@@ -20,7 +23,8 @@ export class AppComponent implements OnInit {
     private firebaseAuthService: FirebaseAuthService,
     private firebaseMessagingService: FirebaseMessagingService,
     private firebaseFirestore: FirebaseFirestoreService,
-    private destroyRef: DestroyRef
+    private destroyRef: DestroyRef,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -41,8 +45,20 @@ export class AppComponent implements OnInit {
       .getMessagePayloadObservable()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((_msg) => {
-        // Todo - popup
+        console.log('payload', _msg);
+        this._openDialog(_msg);
       });
+
+    const test = {
+      from: '902123464873',
+      messageId: 'e102703e-eaac-4fa1-8f04-18a0b5ddcd24',
+      notification: {
+        title: 'Cigi?',
+        body: 'From: Dominik Zabari',
+      },
+    } as MessagePayload;
+
+    this._openDialog(test);
   }
 
   private async _subscribeToMessages(): Promise<void> {
@@ -59,5 +75,17 @@ export class AppComponent implements OnInit {
     }
     await this.firebaseMessagingService.requestPermission(uid);
     this.firebaseMessagingService.listen();
+  }
+
+  private _openDialog(_msg: MessagePayload): void {
+    this.dialog.closeAll();
+
+    let dialogRef = this.dialog.open(NewMessageComponent, {
+
+    });
+
+    dialogRef.componentInstance.title = _msg.notification?.title;
+    dialogRef.componentInstance.body = _msg.notification?.body;
+    dialogRef.componentInstance.date = new Date();
   }
 }
