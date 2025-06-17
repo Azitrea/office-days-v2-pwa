@@ -53,10 +53,7 @@ export class DashboardComponent {
     );
   }
 
-  ngOnInit(): void {
-    this.firebaseFirestore.getAllUsers();
-    this.firebaseFirestore.getLatestMessages();
-  }
+  ngOnInit(): void {}
 
   navigateToProfile(): void {
     this.router.navigateByUrl('profile');

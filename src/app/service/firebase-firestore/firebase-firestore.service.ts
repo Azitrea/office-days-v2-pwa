@@ -6,9 +6,11 @@ import {
   getDoc,
   getDocs,
   limit,
+  onSnapshot,
   orderBy,
   query,
   setDoc,
+  Unsubscribe,
   updateDoc,
   where,
 } from 'firebase/firestore';
@@ -19,6 +21,8 @@ import { User } from 'firebase/auth';
 import { FirebseStoredMessage } from '../../model/messages.model';
 import { BehaviorSubject } from 'rxjs';
 
+const MESSAGES_LIMIT = 3;
+
 @Injectable({
   providedIn: 'root',
 })
@@ -26,6 +30,9 @@ export class FirebaseFirestoreService {
   private firebseService = inject(FirebaseService);
 
   private _firestore = getFirestore(this.firebseService.getFirebaseApp());
+
+  private _firestoreMessageLogsUnsub: Unsubscribe | undefined;
+  private _firestoreUsersUnsub: Unsubscribe | undefined;
 
   userDetails = new BehaviorSubject<UserProfileData | undefined>(undefined);
   firestoreAllUsers = new BehaviorSubject<UserProfileData[] | undefined>(
@@ -109,7 +116,10 @@ export class FirebaseFirestoreService {
     }
   }
 
-  async getUserDetails(userID: string, force: boolean = false): Promise<UserProfileData | undefined> {
+  async getUserDetails(
+    userID: string,
+    force: boolean = false
+  ): Promise<UserProfileData | undefined> {
     if (this.userDetails.value !== undefined && force === false) {
       return this.userDetails.value;
     }
@@ -155,7 +165,7 @@ export class FirebaseFirestoreService {
     }
 
     const messageLogsRef = collection(this._firestore, 'messageLogs');
-    const q = query(messageLogsRef, orderBy('createdAt', 'desc'), limit(10));
+    const q = query(messageLogsRef, orderBy('createdAt', 'desc'), limit(MESSAGES_LIMIT));
 
     const querySnapshot = await getDocs(q);
     const messages = querySnapshot.docs.map((doc) => ({
@@ -188,5 +198,97 @@ export class FirebaseFirestoreService {
 
     this.firestoreLatestMessages.next(mappedMessages);
     return mappedMessages;
+  }
+
+  async unsubscribeFromFirestoreMessages(): Promise<void> {
+    if (this._firestoreMessageLogsUnsub) {
+      this._firestoreMessageLogsUnsub();
+    }
+  }
+
+  async subscribeToLatestMessages(): Promise<void> {
+    const messageLogsRef = collection(this._firestore, 'messageLogs');
+    const q = query(messageLogsRef, orderBy('createdAt', 'desc'), limit(MESSAGES_LIMIT));
+
+    this._firestoreMessageLogsUnsub = onSnapshot(q, async (snapshot) => {
+      if (this.firestoreAllUsers.value === undefined) {
+        await this.getAllUsers();
+      }
+
+      if (this.firestoreLatestMessages.value === undefined) {
+        await this.getLatestMessages();
+        return;
+      }
+
+      snapshot.docChanges().forEach((change) => {
+        if (change.type === 'added') {
+          let value = this.firestoreLatestMessages.value;
+          if (value === undefined) value = [];
+
+          const newMessage = change.doc.data() as FirebseStoredMessage;
+          newMessage['id'] = change.doc.id;
+          newMessage['displayName'] =
+            this.firestoreAllUsers.value?.find(
+              (u) => newMessage.userId === u.id
+            )?.displayName ?? newMessage.userId;
+
+          value?.unshift(newMessage);
+          this.firestoreLatestMessages.next(value);
+        }
+        if (change.type === 'modified') {
+          console.log('Modified doc: ', change.doc.data());
+        }
+        if (change.type === 'removed') {
+          console.log('Removed doc: ', change.doc.id);
+
+          const value = this.firestoreLatestMessages.value;
+          if (value === undefined) {
+            return;
+          }
+
+          const messageToRemoveID = change.doc.id;
+          const index = value.findIndex((msg) => msg.id === messageToRemoveID);
+          value.splice(index, 1);
+
+          this.firestoreLatestMessages.next(value);
+        }
+      });
+    });
+  }
+
+  async unsubscribeFromFirestoreUsers(): Promise<void> {
+    if (this._firestoreUsersUnsub) {
+      this._firestoreUsersUnsub();
+    }
+  }
+
+  async subscribeToUsers(): Promise<void> {
+    const usersColl = collection(this._firestore, 'users');
+
+    this._firestoreUsersUnsub = onSnapshot(usersColl, (snapshot) => {
+      if (this.firestoreAllUsers.value === undefined) {
+        return;
+      }
+
+      snapshot.docChanges().forEach((change) => {
+        if (change.type === 'added') {
+          console.log('New user: ', change.doc.data());
+          let value = this.firestoreAllUsers.value;
+          if (value === undefined) value = [];
+
+          const newUser = change.doc.data() as UserProfileData;
+          newUser['id'] = change.doc.id;
+          value.unshift(newUser);
+
+          this.firestoreAllUsers.next(value);
+        }
+        if (change.type === 'modified') {
+          console.log('Modified user: ', change.doc.data());
+        }
+        if (change.type === 'removed') {
+          console.log('Removed user: ', change.doc.data());
+        }
+      });
+    });
   }
 }

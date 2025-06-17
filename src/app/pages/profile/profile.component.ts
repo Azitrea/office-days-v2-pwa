@@ -80,6 +80,8 @@ export class ProfileComponent implements OnInit {
     }
     this.isLoading = true;
     await this.firebaseMessagingService.deleteUserMessageSubscription(uid);
+    await this.firebaseFirestoreService.unsubscribeFromFirestoreMessages();
+    await this.firebaseFirestoreService.unsubscribeFromFirestoreUsers();
     await this.firebaseAuthService.signOut();
     this.router.navigateByUrl('/login');
     this.isLoading = false;

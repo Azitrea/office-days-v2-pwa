@@ -33,14 +33,14 @@ export class AppComponent implements OnInit {
       )
       .subscribe((_user) => {
         this._subscribeToMessages();
+        this.firebaseFirestore.subscribeToLatestMessages();
+        this.firebaseFirestore.subscribeToUsers();
       });
 
     this.firebaseMessagingService
       .getMessagePayloadObservable()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((_msg) => {
-        this.firebaseFirestore.getLatestMessages(true);
-
         // Todo - popup
       });
   }

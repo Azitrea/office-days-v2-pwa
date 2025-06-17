@@ -46,26 +46,26 @@
 
     <div class="grid gap-4 md:grid-cols-1">
       @for (msg of latestMessages(); track msg.id) {
-      <mat-card class="p-4 shadow-sm rounded-xl" appearance="outlined">
-        <div class="flex justify-between items-center mb-2">
-          <h3 class="text-lg font-semibold text-gray-800">{{ msg.title }}</h3>
-          <span class="text-xs text-gray-400">
-            {{ msg.createdAt.toDate() | date: "YYYY-MM-dd HH:mm" }}
-          </span>
-        </div>
+        <mat-card class="p-4 shadow-sm rounded-xl" appearance="outlined">
+          <div class="flex justify-between items-center mb-2">
+            <h3 class="text-lg font-semibold text-gray-800">{{ msg.title }}</h3>
+            <span class="text-xs text-gray-400">
+              {{ msg.createdAt.toDate() | date: "YYYY-MM-dd HH:mm" }}
+            </span>
+          </div>
 
-        <p class="text-sm text-gray-700 mb-4 whitespace-pre-wrap">
-          {{ msg.body }}
-        </p>
+          <p class="text-sm text-gray-700 mb-4 whitespace-pre-wrap">
+            {{ msg.body }}
+          </p>
 
-        <div class="text-right text-xs text-gray-500 italic">
-          — {{ msg.displayName || "Unknown user" }}
-        </div>
-      </mat-card>
+          <div class="text-right text-xs text-gray-500 italic">
+            — {{ msg.displayName || "Unknown user" }}
+          </div>
+        </mat-card>
       } @empty {
-      <div class="w-full py-8 flex justify-center items-center">
-        <div class="text-xs text-gray-400">Empty</div>
-      </div>
+        <div class="w-full py-8 flex justify-center items-center">
+          <div class="text-xs text-gray-400">Empty</div>
+        </div>
       }
     </div>
   </mat-card>
