@@ -21,6 +21,10 @@
     </div>
   }
 
+  @if (!isFirebaseMessagingSupported()) {
+    <div class="text-center py-2 mb-4 text-red-600">Web push notifications are not supported on this device.</div>
+  }
+
   <!-- Action Buttons -->
   <div class="flex flex-col sm:flex-row sm:justify-center gap-4 mb-6">
     <button mat-raised-button color="accent" (click)="sendMessage()" [disabled]="isLoading" class="w-full sm:w-auto">

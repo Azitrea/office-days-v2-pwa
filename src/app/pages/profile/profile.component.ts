@@ -11,7 +11,10 @@ import { UserDetails, UserProfileData } from '../../model/user-details.model';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
-import { MatSlideToggleChange, MatSlideToggleModule } from '@angular/material/slide-toggle';
+import {
+  MatSlideToggleChange,
+  MatSlideToggleModule,
+} from '@angular/material/slide-toggle';
 
 @Component({
   selector: 'app-profile',
@@ -30,10 +33,10 @@ import { MatSlideToggleChange, MatSlideToggleModule } from '@angular/material/sl
 export class ProfileComponent implements OnInit {
   isLoading: boolean = false;
   isFirebaseMessagignActive: Signal<boolean | undefined>;
+  isFirebaseMessagingSupported: Signal<boolean | undefined>;
 
   currentUser: Signal<User | null | undefined> | undefined;
   userDetails: UserProfileData | undefined;
-
 
   constructor(
     private firebaseAuthService: FirebaseAuthService,
@@ -44,6 +47,10 @@ export class ProfileComponent implements OnInit {
     this.currentUser = toSignal(this.firebaseAuthService.user$);
     this.isFirebaseMessagignActive = toSignal(
       this.firebaseMessagingService.isFirebaseMessagignActive()
+    );
+
+    this.isFirebaseMessagingSupported = toSignal(
+      this.firebaseMessagingService.isFirebaseMessagingSupported()
     );
   }
 
@@ -80,9 +87,11 @@ export class ProfileComponent implements OnInit {
     }
     this.isLoading = true;
     await this.firebaseMessagingService.deleteUserMessageSubscription(uid);
+    this.firebaseMessagingService.clearFirebaseMessagingStatus();
     await this.firebaseFirestoreService.unsubscribeFromFirestoreMessages();
     await this.firebaseFirestoreService.unsubscribeFromFirestoreUsers();
     await this.firebaseAuthService.signOut();
+    this.firebaseFirestoreService.clearMessagesAndUsers();
     this.router.navigateByUrl('/login');
     this.isLoading = false;
   }

@@ -108,8 +108,28 @@ export const sendPushToUserIds = functions.https.onCall(
       }
 
       const message: MulticastMessage = {
-        notification: { title, body },
         tokens: tokensToSend,
+        notification: { title, body },
+        data: {
+          senderUID: request.auth.uid,
+        },
+        webpush: {
+          notification: {
+            title,
+            body,
+            /* actions: [{ title: 'Ok', action: 'Ok' }], */
+            data: {
+              senderUID: request.auth.uid,
+            },
+            /* icon: '',
+            image: '',
+            badge: '', */
+            renotify: true,
+          },
+          fcmOptions: {
+            link: 'https://office-days-v2.web.app/',
+          },
+        },
       };
 
       const response = await messaging.sendEachForMulticast(message);

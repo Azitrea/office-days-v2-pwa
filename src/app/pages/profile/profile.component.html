@@ -2,38 +2,30 @@
   <!-- Page Header -->
   <div class="flex justify-between items-center mb-4">
     <h1 class="text-2xl font-semibold">Profile</h1>
-    <button
-      mat-icon-button
-      aria-label="Go to Dashboard"
-      (click)="navigateToDashboard()"
-      class="text-gray-600 hover:text-blue-600 !flex"
-    >
+    <button mat-icon-button aria-label="Go to Dashboard" (click)="navigateToDashboard()"
+      class="text-gray-600 hover:text-blue-600 !flex">
       <mat-icon>dashboard</mat-icon>
     </button>
   </div>
 
   <!-- Firebase Subscription Toggle -->
   <mat-card class="mb-4 p-4 rounded-xl shadow-sm">
+
+    @if ( !isFirebaseMessagingSupported()) {
+    <div class="text-center py-2 text-red-600">Web push notifications are not supported on this device.</div>
+    }
     <div class="flex justify-between items-center">
       <span class="font-medium">Firebase Messaging</span>
       @if (isFirebaseMessagignActive()) {
-        <button
-          mat-stroked-button
-          color="warn"
-          (click)="unsubscribeFromMessages()"
-          [disabled]="isLoading"
-        >
-          Unsubscribe
-        </button>
+      <button mat-stroked-button color="warn" (click)="unsubscribeFromMessages()"
+        [disabled]="isLoading || !isFirebaseMessagingSupported()">
+        Unsubscribe
+      </button>
       } @else {
-        <button
-          mat-stroked-button
-          color="primary"
-          (click)="subscribeToMessages()"
-          [disabled]="isLoading"
-        >
-          Subscribe
-        </button>
+      <button mat-stroked-button color="primary" (click)="subscribeToMessages()"
+        [disabled]="isLoading || !isFirebaseMessagingSupported()">
+        Subscribe
+      </button>
       }
     </div>
   </mat-card>
@@ -41,44 +33,35 @@
   <!-- User Info -->
   <mat-card class="mb-4 p-4 rounded-xl shadow-sm">
     @if (currentUser) {
-      <div class="mb-2">
-        <div class="text-sm text-gray-500">Name:</div>
-        <div class="font-medium">{{ currentUser()?.displayName }}</div>
-      </div>
-      <div>
-        <div class="text-sm text-gray-500">Email:</div>
-        <div class="font-medium">{{ currentUser()?.email }}</div>
-      </div>
+    <div class="mb-2">
+      <div class="text-sm text-gray-500">Name:</div>
+      <div class="font-medium">{{ currentUser()?.displayName }}</div>
+    </div>
+    <div>
+      <div class="text-sm text-gray-500">Email:</div>
+      <div class="font-medium">{{ currentUser()?.email }}</div>
+    </div>
     } @else {
-      <div class="text-red-600 font-medium">Error: User not found.</div>
+    <div class="text-red-600 font-medium">Error: User not found.</div>
     }
   </mat-card>
 
   <!-- Receive Messages Toggle -->
   <mat-card class="mb-4 p-4 rounded-xl shadow-sm">
     @if (userDetails) {
-      <div class="flex justify-between items-center">
-        <span class="font-medium">Receive Messages?</span>
-        <mat-slide-toggle
-          [checked]="userDetails.details.receiveMessages"
-          (change)="inputChange($event)"
-          [disabled]="isLoading"
-        ></mat-slide-toggle>
-      </div>
+    <div class="flex justify-between items-center">
+      <span class="font-medium">Receive Messages? (All devices)</span>
+      <mat-slide-toggle [checked]="userDetails.details.receiveMessages" (change)="inputChange($event)"
+        [disabled]="isLoading"></mat-slide-toggle>
+    </div>
     } @else {
-      <div>Loading details...</div>
+    <div>Loading details...</div>
     }
   </mat-card>
 
   <!-- Sign Out Button -->
   <div class="text-center">
-    <button
-      mat-raised-button
-      color="warn"
-      (click)="signOut()"
-      [disabled]="isLoading"
-      class="w-full sm:w-auto"
-    >
+    <button mat-raised-button color="warn" (click)="signOut()" [disabled]="isLoading" class="w-full sm:w-auto">
       Sign Out
     </button>
   </div>

@@ -50,6 +50,7 @@ export class FirebaseFirestoreService {
     try {
       const tokenDoc = await getDoc(tokenRef);
       if (tokenDoc.exists()) {
+        console.log('Token exists in storage');
         return;
       }
 
@@ -165,7 +166,11 @@ export class FirebaseFirestoreService {
     }
 
     const messageLogsRef = collection(this._firestore, 'messageLogs');
-    const q = query(messageLogsRef, orderBy('createdAt', 'desc'), limit(MESSAGES_LIMIT));
+    const q = query(
+      messageLogsRef,
+      orderBy('createdAt', 'desc'),
+      limit(MESSAGES_LIMIT)
+    );
 
     const querySnapshot = await getDocs(q);
     const messages = querySnapshot.docs.map((doc) => ({
@@ -203,12 +208,17 @@ export class FirebaseFirestoreService {
   async unsubscribeFromFirestoreMessages(): Promise<void> {
     if (this._firestoreMessageLogsUnsub) {
       this._firestoreMessageLogsUnsub();
+      this._firestoreMessageLogsUnsub = undefined;
     }
   }
 
   async subscribeToLatestMessages(): Promise<void> {
     const messageLogsRef = collection(this._firestore, 'messageLogs');
-    const q = query(messageLogsRef, orderBy('createdAt', 'desc'), limit(MESSAGES_LIMIT));
+    const q = query(
+      messageLogsRef,
+      orderBy('createdAt', 'desc'),
+      limit(MESSAGES_LIMIT)
+    );
 
     this._firestoreMessageLogsUnsub = onSnapshot(q, async (snapshot) => {
       if (this.firestoreAllUsers.value === undefined) {
@@ -259,6 +269,7 @@ export class FirebaseFirestoreService {
   async unsubscribeFromFirestoreUsers(): Promise<void> {
     if (this._firestoreUsersUnsub) {
       this._firestoreUsersUnsub();
+      this._firestoreUsersUnsub = undefined;
     }
   }
 
@@ -290,5 +301,11 @@ export class FirebaseFirestoreService {
         }
       });
     });
+  }
+
+  clearMessagesAndUsers(): void {
+    this.userDetails.next(undefined);
+    this.firestoreAllUsers.next(undefined);
+    this.firestoreLatestMessages.next(undefined);
   }
 }

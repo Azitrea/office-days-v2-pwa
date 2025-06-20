@@ -31,8 +31,8 @@ export class AppComponent implements OnInit {
     // this.firebaseService.initializeFirebase();
     this.firebaseAuthService.user$
       .pipe(
-        filter((user) => !!user),
         distinctUntilChanged((prev, next) => prev?.uid === next?.uid),
+        filter((user) => !!user),
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe((_user) => {
@@ -45,7 +45,6 @@ export class AppComponent implements OnInit {
       .getMessagePayloadObservable()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((_msg) => {
-        console.log('payload', _msg);
         this._openDialog(_msg);
       });
   }
@@ -60,6 +59,7 @@ export class AppComponent implements OnInit {
 
     const uid = this.firebaseAuthService.currentUser?.uid;
     if (!uid) {
+      console.log('No userID');
       return;
     }
     await this.firebaseMessagingService.requestPermission(uid);

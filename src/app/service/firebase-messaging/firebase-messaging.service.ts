@@ -6,6 +6,7 @@ import {
   onMessage,
   deleteToken,
   Unsubscribe,
+  isSupported,
 } from 'firebase/messaging';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { environment } from '../../../environments/environment';
@@ -19,6 +20,7 @@ export class FirebaseMessagingService {
 
   private _isFirebaseMessagingInitialized = new BehaviorSubject<boolean>(false);
   private _isFirebaseMessagingActive = new BehaviorSubject<boolean>(false);
+  private _isFirebaseMessagingSupported = new BehaviorSubject<boolean>(false);
 
   private _messageSubject: Subject<MessagePayload> = new Subject();
   private _messageUnsubscribeFunction: Unsubscribe | undefined;
@@ -31,7 +33,10 @@ export class FirebaseMessagingService {
     return this._isFirebaseMessagingInitialized.value;
   }
 
-  initializeMessaging(): void {
+  async initializeMessaging(): Promise<void> {
+    const isMessagingSupported = await isSupported();
+    this._isFirebaseMessagingSupported.next(isMessagingSupported);
+
     this._isFirebaseMessagingActive.next(this._getFirebaseMessagingStatus());
   }
 
@@ -43,11 +48,23 @@ export class FirebaseMessagingService {
     return this._isFirebaseMessagingActive.value;
   }
 
+  isFirebaseMessagingSupported(): Observable<boolean> {
+    return this._isFirebaseMessagingSupported.asObservable();
+  }
+
+  isFirebaseMessagingSupportedValue(): boolean {
+    return this._isFirebaseMessagingSupported.value;
+  }
+
   getMessagePayloadObservable(): Observable<MessagePayload> {
     return this._messageSubject.asObservable();
   }
 
   async requestPermission(userID: string): Promise<void> {
+    if (!this._isFirebaseMessagingSupported.value) {
+      return;
+    }
+
     const messaging = getMessaging();
 
     const currentToken = await getToken(messaging, {
@@ -75,6 +92,10 @@ export class FirebaseMessagingService {
   }
 
   listen() {
+    if (!this._isFirebaseMessagingSupported.value) {
+      return;
+    }
+
     const messaging = getMessaging();
     this._messageUnsubscribeFunction = onMessage(messaging, (payload) => {
       console.log('Message received. ', payload);
@@ -83,7 +104,10 @@ export class FirebaseMessagingService {
   }
 
   async deleteUserMessageSubscription(userID: string): Promise<void> {
-    if (!this._isFirebaseMessagingActive.value) {
+    if (
+      !this._isFirebaseMessagingActive.value ||
+      !this._isFirebaseMessagingSupported.value
+    ) {
       return;
     }
 
@@ -103,10 +127,17 @@ export class FirebaseMessagingService {
         this._messageUnsubscribeFunction();
       }
 
+      this._isFirebaseMessagingInitialized.next(false);
       this._setFirebaseMessagingStatus(false);
     } catch (error) {
       console.error('Failed to cancel message subscriptions');
     }
+  }
+
+  clearFirebaseMessagingStatus(): void {
+    localStorage.removeItem(this._firebaseLocalStorageKey); // Remove istead of set to false
+    this._isFirebaseMessagingActive.next(true);
+    this._isFirebaseMessagingInitialized.next(false);
   }
 
   private _setFirebaseMessagingStatus(status: boolean): void {
@@ -115,6 +146,12 @@ export class FirebaseMessagingService {
   }
 
   private _getFirebaseMessagingStatus(): boolean {
-    return localStorage.getItem(this._firebaseLocalStorageKey) === 'true';
+    const messagignStatus = localStorage.getItem(this._firebaseLocalStorageKey);
+    console.log('messagignStatus', messagignStatus);
+    return (
+      messagignStatus === 'true' ||
+      messagignStatus === null ||
+      messagignStatus === undefined
+    );
   }
 }

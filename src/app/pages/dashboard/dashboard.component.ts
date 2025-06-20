@@ -15,6 +15,7 @@ import { FirebseStoredMessage } from '../../model/messages.model';
 import { UserProfileData } from '../../model/user-details.model';
 import { FirebaseError } from 'firebase/app';
 import { Timestamp } from 'firebase/firestore';
+import { FirebaseMessagingService } from '../../service/firebase-messaging/firebase-messaging.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -37,10 +38,13 @@ export class DashboardComponent {
 
   errorMessage: Record<string, string> | undefined;
 
+  isFirebaseMessagingSupported: Signal<boolean | undefined>;
+
   constructor(
     private firebaseAuthService: FirebaseAuthService,
     private firebaseFirestore: FirebaseFirestoreService,
     private firebaseFunctions: FirebaseFunctionsService,
+    private firebaseMessagingService: FirebaseMessagingService,
     private snackBar: MatSnackBar,
     private router: Router
   ) {
@@ -50,6 +54,10 @@ export class DashboardComponent {
 
     this.latestMessages = toSignal(
       this.firebaseFirestore.firestoreLatestMessages.asObservable()
+    );
+
+    this.isFirebaseMessagingSupported = toSignal(
+      this.firebaseMessagingService.isFirebaseMessagingSupported()
     );
   }
 
