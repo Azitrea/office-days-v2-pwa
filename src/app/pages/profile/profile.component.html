@@ -51,13 +51,26 @@
     @if (userDetails) {
     <div class="flex justify-between items-center">
       <span class="font-medium">Receive Messages? (All devices)</span>
-      <mat-slide-toggle [checked]="userDetails.details.receiveMessages" (change)="inputChange($event)"
-        [disabled]="isLoading"></mat-slide-toggle>
+      <mat-slide-toggle [checked]="userDetails.details.receiveMessages"
+        (change)="inputChange('receiveMessages', $event)" [disabled]="isLoading"></mat-slide-toggle>
     </div>
     } @else {
     <div>Loading details...</div>
     }
   </mat-card>
+
+  <!-- WIP -->
+  @if (false && userDetails && userDetails.details.receiveMessages) {
+  <mat-card class="mb-4 p-4 rounded-xl shadow-sm flex flex-col gap-2">
+    @for (day of weekDays; track $index) {
+    <div class="flex justify-between items-center">
+      <span class="font-medium" [ngClass]="{'text-blue-800': day.day === todayDay}">{{ day.name }}</span>
+      <mat-slide-toggle [checked]="userDetails.details[day.day]" (change)="inputChange(day.day, $event)"
+        [disabled]="isLoading"></mat-slide-toggle>
+    </div>
+    }
+  </mat-card>
+  }
 
   <!-- Sign Out Button -->
   <div class="text-center">

@@ -38,6 +38,18 @@ export class ProfileComponent implements OnInit {
   currentUser: Signal<User | null | undefined> | undefined;
   userDetails: UserProfileData | undefined;
 
+  todayDay = new Date().getDay().toString();
+
+  weekDays = [
+    { name: 'Monday', day: '1' },
+    { name: 'Tuesday', day: '2' },
+    { name: 'Wednesday', day: '3' },
+    { name: 'Thursday', day: '4' },
+    { name: 'Friday', day: '5' },
+    { name: 'Saturday', day: '6' },
+    { name: 'Sunday', day: '0' },
+  ];
+
   constructor(
     private firebaseAuthService: FirebaseAuthService,
     private firebaseMessagingService: FirebaseMessagingService,
@@ -62,17 +74,21 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  inputChange(event: MatSlideToggleChange): void {
-    this.updateUserDetail({ receiveMessages: event.checked });
+  inputChange(key: string | number, event: MatSlideToggleChange): void {
+    this.updateUserDetail({ [key]: event.checked });
   }
 
   async updateUserDetail(details: Partial<UserDetails>): Promise<void> {
     const uid = this.firebaseAuthService.currentUser?.uid;
-    if (this.isLoading || !uid) {
+    if (this.isLoading || !uid || !this.userDetails) {
       return;
     }
     this.isLoading = true;
-    await this.firebaseFirestoreService.updateUserDetails(uid, details);
+    this.userDetails.details = { ...this.userDetails.details, ...details };
+    await this.firebaseFirestoreService.updateUserDetails(
+      uid,
+      this.userDetails.details
+    );
     this.isLoading = false;
   }
 

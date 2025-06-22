@@ -111,7 +111,7 @@ export class FirebaseFirestoreService {
           ...details,
         },
       });
-      console.log('Value added', details);
+      // console.log('Value added', details);
     } catch (error) {
       console.error('Error deleting token from Firestore', error);
     }
