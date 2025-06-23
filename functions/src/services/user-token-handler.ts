@@ -16,6 +16,7 @@ export const getUserTokens = async (
       ? (await db.collection('users').get()).docs.map((doc) => doc.id)
       : userIds;
 
+  const today = new Date().getDay().toString();
   for (const userId of localUserIDs) {
     const userRef = await db.doc(`users/${userId}`);
     const docSnapshot = await userRef.get();
@@ -24,7 +25,7 @@ export const getUserTokens = async (
     }
 
     const userDetail = docSnapshot.data() as UserProfileData;
-    if (!userDetail?.details.receiveMessages) {
+    if (!userDetail?.details.receiveMessages || userDetail?.details[today] !== true) {
       continue;
     }
 

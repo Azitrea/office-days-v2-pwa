@@ -1,8 +1,8 @@
 import * as functions from 'firebase-functions';
 import { AuthData } from 'firebase-functions/tasks';
 
-const VALID_MESSAGE_TITLE_LENGTH = 50;
-const VALID_MESSAGE_BODY_LENGTH = 250;
+const VALID_MESSAGE_TITLE_LENGTH = 40;
+const VALID_MESSAGE_BODY_LENGTH = 150;
 
 /**
  * Validate if the user is authenticated.

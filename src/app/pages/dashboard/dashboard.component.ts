@@ -16,6 +16,10 @@ import { UserProfileData } from '../../model/user-details.model';
 import { FirebaseError } from 'firebase/app';
 import { Timestamp } from 'firebase/firestore';
 import { FirebaseMessagingService } from '../../service/firebase-messaging/firebase-messaging.service';
+import { MinutesPassedPipe } from '../../pipe/minutes-passed/minutes-passed.pipe';
+import { MatDialog } from '@angular/material/dialog';
+import { CustomMessageComponent } from '../../components/custom-message/custom-message.component';
+import { UserResponseComponent } from '../../components/user-response/user-response.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -26,6 +30,7 @@ import { FirebaseMessagingService } from '../../service/firebase-messaging/fireb
     MatProgressSpinnerModule,
     MatIconModule,
     MatSnackBarModule,
+    MinutesPassedPipe,
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
@@ -46,7 +51,8 @@ export class DashboardComponent {
     private firebaseFunctions: FirebaseFunctionsService,
     private firebaseMessagingService: FirebaseMessagingService,
     private snackBar: MatSnackBar,
-    private router: Router
+    private router: Router,
+    private dialog: MatDialog
   ) {
     this.allUsers = toSignal(
       this.firebaseFirestore.firestoreAllUsers.asObservable()
@@ -109,5 +115,13 @@ export class DashboardComponent {
         ? ['bg-red-600', 'text-white']
         : ['bg-green-600', 'text-white'],
     });
+  }
+
+  openMessageSettings(): void {
+    let dialogRef = this.dialog.open(CustomMessageComponent);
+  }
+
+  openReplyList(): void {
+    let dialogRef = this.dialog.open(UserResponseComponent);
   }
 }

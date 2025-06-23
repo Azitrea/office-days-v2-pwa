@@ -8,4 +8,5 @@ export interface UserProfileData {
 
 export interface UserDetails {
   receiveMessages: boolean;
+  [key: string]: boolean;
 }

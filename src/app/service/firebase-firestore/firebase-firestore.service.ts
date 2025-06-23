@@ -89,6 +89,13 @@ export class FirebaseFirestoreService {
         displayName: currentUser.displayName,
         details: {
           receiveMessages: true,
+          '0': false,
+          '1': false,
+          '2': true,
+          '3': true,
+          '4': true,
+          '5': false,
+          '6': false
         },
       };
 

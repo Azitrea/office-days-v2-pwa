@@ -1,10 +1,12 @@
 <div class="relative p-4 max-w-xl mx-auto text-gray-800">
   <div class="relative h-10 mb-10 flex justify-center items-center">
     <!-- Settings Icon Button (top-right corner) -->
-    <div class="absolute right-4 z-10">
+    <div class="absolute right-0 z-10">
       <button mat-icon-button aria-label="Settings" (click)="navigateToProfile()"
         class="!flex text-gray-600 hover:text-blue-600">
-        <mat-icon>settings</mat-icon>
+        <div class="flex">
+          <mat-icon>person</mat-icon>
+        </div>
       </button>
     </div>
 
@@ -13,20 +15,21 @@
   </div>
 
   @if (errorMessage) {
-    <div class="mb-5 flex flex-col gap-2 justify-center items-center">
-      <div class="text-red-600 text-center">{{ errorMessage['message'] }}</div>
-      @if (errorMessage['nextMessageCanBeSent'] !== undefined) {
-        <div class="text-red-600 text-center">Next message can be sent: {{errorMessage['nextMessageCanBeSent'] | date: "YYYY-MM-dd HH:mm" }}</div>
-      }
-    </div>
+  <div class="mb-5 flex flex-col gap-2 justify-center items-center">
+    <div class="text-red-600 text-center">{{ errorMessage['message'] }}</div>
+    @if (errorMessage['nextMessageCanBeSent'] !== undefined) {
+    <div class="text-red-600 text-center">Next message can be sent: {{errorMessage['nextMessageCanBeSent'] | date:
+      "YYYY-MM-dd HH:mm" }}</div>
+    }
+  </div>
   }
 
   @if (!isFirebaseMessagingSupported()) {
-    <div class="text-center py-2 mb-4 text-red-600">Web push notifications are not supported on this device.</div>
+  <div class="text-center py-2 mb-4 text-red-600">Web push notifications are not supported on this device.</div>
   }
 
   <!-- Action Buttons -->
-  <div class="flex flex-col sm:flex-row sm:justify-center gap-4 mb-6">
+  <div class="flex sm:flex-row sm:justify-center gap-4 mb-6">
     <button mat-raised-button color="accent" (click)="sendMessage()" [disabled]="isLoading" class="w-full sm:w-auto">
       <div class="flex items-center justify-center gap-2">
         @if (isLoading) {
@@ -34,6 +37,11 @@
           class="!inline-block !align-middle"></mat-progress-spinner>
         }
         <span>{{ isLoading ? "Sending..." : "Send Notification" }}</span>
+      </div>
+    </button>
+    <button mat-icon-button (click)="openMessageSettings()">
+      <div class="flex">
+        <mat-icon class="text-gray-600 hover:text-blue-600">settings</mat-icon>
       </div>
     </button>
   </div>
@@ -48,28 +56,52 @@
     </div>
     }
 
-    <div class="grid gap-4 md:grid-cols-1">
+    <div class="flex flex-col gap-4">
       @for (msg of latestMessages(); track msg.id) {
-        <mat-card class="p-4 shadow-sm rounded-xl" appearance="outlined">
-          <div class="flex justify-between items-center mb-2">
-            <h3 class="text-lg font-semibold text-gray-800">{{ msg.title }}</h3>
-            <span class="text-xs text-gray-400">
+      <mat-card class="p-4 shadow-sm rounded-xl" appearance="outlined">
+        <div class="flex justify-between mb-2 gap-1">
+          <h3 class="text-lg font-semibold text-gray-800">{{ msg.title }}</h3>
+          <div class="flex-shrink-0">
+            <span class="text-xs text-gray-400 leading-5">
               {{ msg.createdAt.toDate() | date: "YYYY-MM-dd HH:mm" }}
             </span>
           </div>
+        </div>
 
-          <p class="text-sm text-gray-700 mb-4 whitespace-pre-wrap">
-            {{ msg.body }}
-          </p>
+        <p class="text-sm text-gray-700 mb-4 whitespace-pre-wrap">
+          {{ msg.body }}
+        </p>
 
+        <div class="flex gap-2 justify-between">
+          <div class="text-left text-xs text-gray-500 italic" (click)="openReplyList()">
+            0 users replied
+          </div>
           <div class="text-right text-xs text-gray-500 italic">
             — {{ msg.displayName || "Unknown user" }}
           </div>
-        </mat-card>
-      } @empty {
-        <div class="w-full py-8 flex justify-center items-center">
-          <div class="text-xs text-gray-400">Empty</div>
         </div>
+
+        <!-- WIP -->
+        @if (false && $index === 0 && (msg.createdAt.toDate() | minutesPassed)) {
+        <div>WIP</div>
+        <div class="flex justify-center gap-8 sm:gap-16 mt-4">
+          <button mat-raised-button [ngClass]="{'!bg-green-500': false}">
+            <div class="flex justify-center">
+              <mat-icon [ngClass]="{'text-white': false}">check</mat-icon>
+            </div>
+          </button>
+          <button mat-raised-button [ngClass]="{'!bg-red-500': false}">
+            <div class=" flex justify-center">
+              <mat-icon [ngClass]="{'text-white': false}">close</mat-icon>
+            </div>
+          </button>
+        </div>
+        }
+      </mat-card>
+      } @empty {
+      <div class="w-full py-8 flex justify-center items-center">
+        <div class="text-xs text-gray-400">Empty</div>
+      </div>
       }
     </div>
   </mat-card>
