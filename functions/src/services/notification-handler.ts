@@ -29,10 +29,11 @@ export const sendNotification = async (
       notification: {
         title,
         body,
-        icon: 'https://office-days-v2.web.app/assets/icons/drawable-mdpi/cigar.png',
-        image:
-          'https://office-days-v2.web.app/assets/icons/drawable-xxhdpi/cigar.png',
+        icon: 'https://office-days-v2.web.app/assets/icons/drawable-xxhdpi/cigar.png',
+        badge: 'https://office-days-v2.web.app/assets/icons/drawable-xxhdpi/cigar.png',
+        image: 'https://office-days-v2.web.app/assets/images/banner.png',
         renotify: true,
+        tag: 'office-days',
       },
       fcmOptions: {
         link: 'https://office-days-v2.web.app/',

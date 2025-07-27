@@ -25,12 +25,14 @@ messaging.onBackgroundMessage(messaging, (payload) => {
   const notificationTitle = payload.notification.title;
   const notificationOptions = {
     body: payload.notification.body,
-    icon:
-      payload.notification.icon ??
-      "https://office-days-v2.web.app/assets/icons/drawable-mdpi/cigar.png",
-    image:
-      payload.notification.image ??
-      "https://office-days-v2.web.app/assets/icons/drawable-xxhdpi/cigar.png",
+    icon: payload.notification.icon ?? undefined,
+    badge: payload.notification.badge ?? undefined,
+    image: payload.notification.image ?? undefined,
+    renotify:
+      payload.notification.renotify !== undefined
+        ? payload.notification.renotify
+        : true,
+    tag: payload.notification.tag ?? "office-days",
   };
 
   self.registration.showNotification(notificationTitle, notificationOptions);
