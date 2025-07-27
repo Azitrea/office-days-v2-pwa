@@ -15,3 +15,23 @@ firebase.initializeApp({
   measurementId: "G-36JDQT4K84",
 });
 const messaging = firebase.messaging();
+
+messaging.onBackgroundMessage(messaging, (payload) => {
+  console.log(
+    "[firebase-messaging-sw.js] Received background message ",
+    payload
+  );
+  // Customize notification here
+  const notificationTitle = payload.notification.title;
+  const notificationOptions = {
+    body: payload.notification.body,
+    icon:
+      payload.notification.icon ??
+      "https://office-days-v2.web.app/assets/icons/drawable-mdpi/cigar.png",
+    image:
+      payload.notification.image ??
+      "https://office-days-v2.web.app/assets/icons/drawable-xxhdpi/cigar.png",
+  };
+
+  self.registration.showNotification(notificationTitle, notificationOptions);
+});

@@ -2,28 +2,41 @@
   <!-- Page Header -->
   <div class="flex justify-between items-center mb-4">
     <h1 class="text-2xl font-semibold">Profile</h1>
-    <button mat-icon-button aria-label="Go to Dashboard" (click)="navigateToDashboard()"
-      class="text-gray-600 hover:text-blue-600 !flex">
+    <button
+      mat-icon-button
+      aria-label="Go to Dashboard"
+      (click)="navigateToDashboard()"
+      class="text-gray-600 hover:text-blue-600 !flex"
+    >
       <mat-icon>dashboard</mat-icon>
     </button>
   </div>
 
   <!-- Firebase Subscription Toggle -->
   <mat-card class="mb-4 p-4 rounded-xl shadow-sm">
-
     @if ( !isFirebaseMessagingSupported()) {
-    <div class="text-center py-2 text-red-600">Web push notifications are not supported on this device.</div>
+    <div class="text-center py-2 text-red-600">
+      Web push notifications are not supported on this device.
+    </div>
     }
     <div class="flex justify-between items-center">
       <span class="font-medium">Firebase Messaging</span>
       @if (isFirebaseMessagignActive()) {
-      <button mat-stroked-button color="warn" (click)="unsubscribeFromMessages()"
-        [disabled]="isLoading || !isFirebaseMessagingSupported()">
+      <button
+        mat-stroked-button
+        color="warn"
+        (click)="unsubscribeFromMessages()"
+        [disabled]="isLoading || !isFirebaseMessagingSupported()"
+      >
         Unsubscribe
       </button>
       } @else {
-      <button mat-stroked-button color="primary" (click)="subscribeToMessages()"
-        [disabled]="isLoading || !isFirebaseMessagingSupported()">
+      <button
+        mat-stroked-button
+        color="primary"
+        (click)="subscribeToMessages()"
+        [disabled]="isLoading || !isFirebaseMessagingSupported()"
+      >
         Subscribe
       </button>
       }
@@ -51,8 +64,11 @@
     @if (userDetails) {
     <div class="flex justify-between items-center">
       <span class="font-medium">Receive Messages? (All devices)</span>
-      <mat-slide-toggle [checked]="userDetails.details.receiveMessages"
-        (change)="inputChange('receiveMessages', $event)" [disabled]="isLoading"></mat-slide-toggle>
+      <mat-slide-toggle
+        [checked]="userDetails.details.receiveMessages"
+        (change)="inputChange('receiveMessages', $event)"
+        [disabled]="isLoading"
+      ></mat-slide-toggle>
     </div>
     } @else {
     <div>Loading details...</div>
@@ -60,13 +76,20 @@
   </mat-card>
 
   <!-- WIP -->
-  @if (false && userDetails && userDetails.details.receiveMessages) {
+  @if (userDetails && userDetails.details.receiveMessages) {
   <mat-card class="mb-4 p-4 rounded-xl shadow-sm flex flex-col gap-2">
     @for (day of weekDays; track $index) {
     <div class="flex justify-between items-center">
-      <span class="font-medium" [ngClass]="{'text-blue-800': day.day === todayDay}">{{ day.name }}</span>
-      <mat-slide-toggle [checked]="userDetails.details[day.day]" (change)="inputChange(day.day, $event)"
-        [disabled]="isLoading"></mat-slide-toggle>
+      <span
+        class="font-medium"
+        [ngClass]="{ 'text-blue-800': day.day === todayDay }"
+        >{{ day.name }}</span
+      >
+      <mat-slide-toggle
+        [checked]="userDetails.details[day.day]"
+        (change)="inputChange(day.day, $event)"
+        [disabled]="isLoading"
+      ></mat-slide-toggle>
     </div>
     }
   </mat-card>
@@ -74,8 +97,18 @@
 
   <!-- Sign Out Button -->
   <div class="text-center">
-    <button mat-raised-button color="warn" (click)="signOut()" [disabled]="isLoading" class="w-full sm:w-auto">
+    <button
+      mat-raised-button
+      color="warn"
+      (click)="signOut()"
+      [disabled]="isLoading"
+      class="w-full sm:w-auto"
+    >
       Sign Out
     </button>
+  </div>
+
+  <div class="text-right text-xs italic text-gray-500">
+    {{ APP_VERSION }}
   </div>
 </div>

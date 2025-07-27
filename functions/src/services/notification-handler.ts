@@ -29,13 +29,9 @@ export const sendNotification = async (
       notification: {
         title,
         body,
-        /* actions: [{ title: 'Ok', action: 'Ok' }], */
-        data: {
-          senderUID: senderUID,
-        },
-        /* icon: '',
-              image: '',
-              badge: '', */
+        icon: 'https://office-days-v2.web.app/assets/icons/drawable-mdpi/cigar.png',
+        image:
+          'https://office-days-v2.web.app/assets/icons/drawable-xxhdpi/cigar.png',
         renotify: true,
       },
       fcmOptions: {
@@ -43,6 +39,5 @@ export const sendNotification = async (
       },
     },
   };
-
   return messaging.sendEachForMulticast(message);
 };

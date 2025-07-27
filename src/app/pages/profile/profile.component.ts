@@ -31,6 +31,8 @@ import {
   styleUrl: './profile.component.scss',
 })
 export class ProfileComponent implements OnInit {
+  APP_VERSION: string = 'v1.0.1' as const;
+
   isLoading: boolean = false;
   isFirebaseMessagignActive: Signal<boolean | undefined>;
   isFirebaseMessagingSupported: Signal<boolean | undefined>;
