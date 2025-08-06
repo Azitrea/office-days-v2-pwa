@@ -1,4 +1,4 @@
-import { Timestamp } from "firebase/firestore";
+import { Timestamp } from 'firebase/firestore';
 
 export interface FirebseStoredMessage {
   id: string;
@@ -7,4 +7,10 @@ export interface FirebseStoredMessage {
   userId: string;
   title: string;
   displayName?: string;
+  acceptDecline: Record<string, string>;
+}
+
+export enum AcceptDecline {
+  ACCEPT = 'accept',
+  DECLINE = 'decline',
 }

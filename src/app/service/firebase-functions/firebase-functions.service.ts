@@ -5,6 +5,7 @@ import {
   HttpsCallableResult,
 } from 'firebase/functions';
 import { FirebaseService } from '../firebase/firebase.service';
+import { AcceptDecline } from '../../model/messages.model';
 
 @Injectable({
   providedIn: 'root',
@@ -34,5 +35,20 @@ export class FirebaseFunctionsService {
     return (await sendPush({ userIds, title, body })) as HttpsCallableResult<
       Record<string, string | number | undefined>
     >;
+  }
+
+  async acceptDeclineInvitation(
+    messageID: string,
+    acceptDeclineResult: AcceptDecline
+  ): Promise<HttpsCallableResult<Record<string, string>>> {
+    const acceptDeclineInvitationFn = httpsCallable(
+      this._firebaseFunctions,
+      'acceptDeclineInvitation'
+    );
+
+    return (await acceptDeclineInvitationFn({
+      messageID,
+      acceptDeclineResult,
+    })) as HttpsCallableResult<Record<string, string>>;
   }
 }

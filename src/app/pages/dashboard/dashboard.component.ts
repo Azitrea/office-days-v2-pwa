@@ -11,7 +11,10 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { FirebseStoredMessage } from '../../model/messages.model';
+import {
+  AcceptDecline,
+  FirebseStoredMessage,
+} from '../../model/messages.model';
 import { UserProfileData } from '../../model/user-details.model';
 import { FirebaseError } from 'firebase/app';
 import { Timestamp } from 'firebase/firestore';
@@ -20,6 +23,8 @@ import { MinutesPassedPipe } from '../../pipe/minutes-passed/minutes-passed.pipe
 import { MatDialog } from '@angular/material/dialog';
 import { CustomMessageComponent } from '../../components/custom-message/custom-message.component';
 import { UserResponseComponent } from '../../components/user-response/user-response.component';
+import { AcceptDeclineVoteHandlerPipe } from '../../pipe/accept-decline-vote-handler/accept-decline-vote-handler.pipe';
+import { ReplyCounterPipe } from '../../pipe/reply-counter/reply-counter.pipe';
 
 @Component({
   selector: 'app-dashboard',
@@ -31,12 +36,15 @@ import { UserResponseComponent } from '../../components/user-response/user-respo
     MatIconModule,
     MatSnackBarModule,
     MinutesPassedPipe,
+    AcceptDeclineVoteHandlerPipe,
+    ReplyCounterPipe,
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
 })
 export class DashboardComponent {
   isLoading: boolean = false;
+  acceptDeclineIsLoading: boolean = false;
 
   allUsers: Signal<UserProfileData[] | undefined>;
   latestMessages: Signal<FirebseStoredMessage[] | undefined>;
@@ -65,6 +73,14 @@ export class DashboardComponent {
     this.isFirebaseMessagingSupported = toSignal(
       this.firebaseMessagingService.isFirebaseMessagingSupported()
     );
+  }
+
+  get acceptDeclineEnum(): typeof AcceptDecline {
+    return AcceptDecline;
+  }
+
+  get uid(): string | undefined {
+    return this.firebaseAuthService.currentUser?.uid;
   }
 
   ngOnInit(): void {}
@@ -121,7 +137,23 @@ export class DashboardComponent {
     let dialogRef = this.dialog.open(CustomMessageComponent);
   }
 
-  openReplyList(): void {
+  openReplyList(messageIndex: number): void {
     let dialogRef = this.dialog.open(UserResponseComponent);
+
+    dialogRef.componentInstance.messageIndex = messageIndex;
+  }
+
+  async acceptDecline(
+    messageID: string,
+    acceptDecline: AcceptDecline
+  ): Promise<void> {
+    this.acceptDeclineIsLoading = true;
+    await this.firebaseFunctions
+      .acceptDeclineInvitation(messageID, acceptDecline)
+      .then(() => {
+        this.showSnack('Success', false);
+      })
+      .catch(() => this.showSnack('Error', true))
+      .finally(() => (this.acceptDeclineIsLoading = false));
   }
 }

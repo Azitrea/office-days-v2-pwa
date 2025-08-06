@@ -2,8 +2,12 @@
   <div class="relative h-10 mb-10 flex justify-center items-center">
     <!-- Settings Icon Button (top-right corner) -->
     <div class="absolute right-0 z-10">
-      <button mat-icon-button aria-label="Settings" (click)="navigateToProfile()"
-        class="!flex text-gray-600 hover:text-blue-600">
+      <button
+        mat-icon-button
+        aria-label="Settings"
+        (click)="navigateToProfile()"
+        class="!flex text-gray-600 hover:text-blue-600"
+      >
         <div class="flex">
           <mat-icon>person</mat-icon>
         </div>
@@ -16,25 +20,37 @@
 
   @if (errorMessage) {
   <div class="mb-5 flex flex-col gap-2 justify-center items-center">
-    <div class="text-red-600 text-center">{{ errorMessage['message'] }}</div>
+    <div class="text-red-600 text-center">{{ errorMessage["message"] }}</div>
     @if (errorMessage['nextMessageCanBeSent'] !== undefined) {
-    <div class="text-red-600 text-center">Next message can be sent: {{errorMessage['nextMessageCanBeSent'] | date:
-      "YYYY-MM-dd HH:mm" }}</div>
+    <div class="text-red-600 text-center">
+      Next message can be sent:
+      {{ errorMessage["nextMessageCanBeSent"] | date : "YYYY-MM-dd HH:mm" }}
+    </div>
     }
   </div>
-  }
-
-  @if (!isFirebaseMessagingSupported()) {
-  <div class="text-center py-2 mb-4 text-red-600">Web push notifications are not supported on this device.</div>
+  } @if (!isFirebaseMessagingSupported()) {
+  <div class="text-center py-2 mb-4 text-red-600">
+    Web push notifications are not supported on this device.
+  </div>
   }
 
   <!-- Action Buttons -->
   <div class="flex sm:flex-row sm:justify-center gap-4 mb-6">
-    <button mat-raised-button color="accent" (click)="sendMessage()" [disabled]="isLoading" class="w-full sm:w-auto">
+    <button
+      mat-raised-button
+      color="accent"
+      (click)="sendMessage()"
+      [disabled]="isLoading"
+      class="w-full sm:w-auto"
+    >
       <div class="flex items-center justify-center gap-2">
         @if (isLoading) {
-        <mat-progress-spinner diameter="20" mode="indeterminate" color="warn"
-          class="!inline-block !align-middle"></mat-progress-spinner>
+        <mat-progress-spinner
+          diameter="20"
+          mode="indeterminate"
+          color="warn"
+          class="!inline-block !align-middle"
+        ></mat-progress-spinner>
         }
         <span>{{ isLoading ? "Sending..." : "Send Notification" }}</span>
       </div>
@@ -63,7 +79,7 @@
           <h3 class="text-lg font-semibold text-gray-800">{{ msg.title }}</h3>
           <div class="flex-shrink-0">
             <span class="text-xs text-gray-400 leading-5">
-              {{ msg.createdAt.toDate() | date: "YYYY-MM-dd HH:mm" }}
+              {{ msg.createdAt.toDate() | date : "YYYY-MM-dd HH:mm" }}
             </span>
           </div>
         </div>
@@ -73,26 +89,68 @@
         </p>
 
         <div class="flex gap-2 justify-between">
-          <div class="text-left text-xs text-gray-500 italic" (click)="openReplyList()">
-            0 users replied
+          <div
+            class="text-left text-xs text-gray-500 italic"
+            (click)="openReplyList($index)"
+          >
+            {{ msg.acceptDecline | replyCounter }}
           </div>
           <div class="text-right text-xs text-gray-500 italic">
             — {{ msg.displayName || "Unknown user" }}
           </div>
         </div>
 
+        @if ($index === 0 && (msg.createdAt.toDate() | minutesPassed) && uid === msg.userId ) {
+          <div class="flex justify-center mt-4 text-green-500 italic">
+            Replying is active
+          </div>
+        }
+
         <!-- WIP -->
-        @if (false && $index === 0 && (msg.createdAt.toDate() | minutesPassed)) {
-        <div>WIP</div>
+        @if ($index === 0 && (msg.createdAt.toDate() | minutesPassed) && uid !== msg.userId ) {
         <div class="flex justify-center gap-8 sm:gap-16 mt-4">
-          <button mat-raised-button [ngClass]="{'!bg-green-500': false}">
+          <button
+            mat-raised-button
+            [ngClass]="{
+              '!bg-green-500':
+                msg.acceptDecline
+                | acceptDeclineVoteHandler : acceptDeclineEnum.ACCEPT
+            }"
+            [disabled]="
+              acceptDeclineIsLoading ||
+              (msg.acceptDecline | acceptDeclineVoteHandler)
+            "
+            (click)="acceptDecline(msg.id, acceptDeclineEnum.ACCEPT)"
+          >
             <div class="flex justify-center">
-              <mat-icon [ngClass]="{'text-white': false}">check</mat-icon>
+              <mat-icon
+                [ngClass]="{
+                  'text-white': msg.acceptDecline | acceptDeclineVoteHandler
+                }"
+                >check</mat-icon
+              >
             </div>
           </button>
-          <button mat-raised-button [ngClass]="{'!bg-red-500': false}">
-            <div class=" flex justify-center">
-              <mat-icon [ngClass]="{'text-white': false}">close</mat-icon>
+          <button
+            mat-raised-button
+            [ngClass]="{
+              '!bg-red-500':
+                msg.acceptDecline
+                | acceptDeclineVoteHandler : acceptDeclineEnum.DECLINE
+            }"
+            [disabled]="
+              acceptDeclineIsLoading ||
+              (msg.acceptDecline | acceptDeclineVoteHandler)
+            "
+            (click)="acceptDecline(msg.id, acceptDeclineEnum.DECLINE)"
+          >
+            <div class="flex justify-center">
+              <mat-icon
+                [ngClass]="{
+                  'text-white': msg.acceptDecline | acceptDeclineVoteHandler
+                }"
+                >close</mat-icon
+              >
             </div>
           </button>
         </div>

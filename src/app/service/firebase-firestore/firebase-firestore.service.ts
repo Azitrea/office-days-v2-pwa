@@ -95,7 +95,7 @@ export class FirebaseFirestoreService {
           '3': true,
           '4': true,
           '5': false,
-          '6': false
+          '6': false,
         },
       };
 
@@ -254,6 +254,17 @@ export class FirebaseFirestoreService {
         }
         if (change.type === 'modified') {
           console.log('Modified doc: ', change.doc.data());
+          let value = this.firestoreLatestMessages.value;
+          if (value === undefined) return;
+
+          const modifiedMessage = change.doc.data() as FirebseStoredMessage;
+
+          const foundIndex = value.findIndex((msg) => msg.id === change.doc.id);
+          if (foundIndex < 0) return;
+
+          value[foundIndex]['acceptDecline'] = modifiedMessage?.acceptDecline;
+          this.firestoreLatestMessages.next([...value]);
+          console.log(this.firestoreLatestMessages.value);
         }
         if (change.type === 'removed') {
           console.log('Removed doc: ', change.doc.id);

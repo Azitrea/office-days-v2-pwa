@@ -1,3 +1,17 @@
 <div class="p-4">
-  List of users, who responded will be here.
+  <div class="text-center font-semibold mb-4">List of users, who replied.</div>
+  @for (resp of userResponses(); track $index) {
+  <div class="flex gap-2 justify-between border-b last:border-b-0">
+    <div class="text-sm flex items-center">{{ resp.displayName }}:</div>
+    <div class="flex">
+      @if (resp.acceptDecline) {
+      <mat-icon class="text-green-500">check</mat-icon>
+      } @else {
+      <mat-icon class="text-red-500">close</mat-icon>
+      }
+    </div>
+  </div>
+  } @empty {
+  <div class="text-center italic text-sm">Nobody has replied.</div>
+  }
 </div>
