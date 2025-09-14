@@ -15,11 +15,15 @@
         type="text"
         placeholder="Title"
         [maxlength]="VALID_MESSAGE_TITLE_LENGTH"
+        [errorStateMatcher]="matcher"
       />
       <mat-hint align="end"
         >{{ customMessageForm.value.messageTitle?.length ?? 0 }} /
         {{ VALID_MESSAGE_TITLE_LENGTH }}</mat-hint
       >
+      @if (customMessageForm.controls['messageTitle'].hasError('required')) {
+      <mat-error>A title is <strong>required</strong></mat-error>
+      }
     </mat-form-field>
     <div>
       <mat-form-field class="w-full max-h-48">
@@ -27,13 +31,17 @@
         <textarea
           matInput
           formControlName="messageBody"
-          [maxlength]="VALID_MESSAGE_BODY_LENGTH"
           placeholder="Message"
+          [maxlength]="VALID_MESSAGE_BODY_LENGTH"
+          [errorStateMatcher]="matcher"
         ></textarea>
         <mat-hint align="end"
           >{{ customMessageForm.value.messageBody?.length ?? 0 }} /
           {{ VALID_MESSAGE_BODY_LENGTH }}</mat-hint
         >
+        @if (customMessageForm.controls['messageBody'].hasError('required')) {
+        <mat-error>A message is <strong>required</strong></mat-error>
+        }
       </mat-form-field>
     </div>
     <button

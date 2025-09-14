@@ -2,15 +2,20 @@ import { Component, DestroyRef, Input, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormBuilder,
+  FormControl,
   FormGroup,
+  FormGroupDirective,
   FormsModule,
+  NgForm,
   ReactiveFormsModule,
+  Validators,
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { ErrorStateMatcher } from '@angular/material/core';
 
 @Component({
   selector: 'app-custom-message',
@@ -33,6 +38,8 @@ export class CustomMessageComponent implements OnInit {
   readonly VALID_MESSAGE_TITLE_LENGTH = 40;
   readonly VALID_MESSAGE_BODY_LENGTH = 150;
 
+  matcher = new MyErrorStateMatcher();
+
   constructor(
     private formBuilder: FormBuilder,
     private dialogRef: MatDialogRef<CustomMessageComponent>,
@@ -49,8 +56,8 @@ export class CustomMessageComponent implements OnInit {
       this._getItemFormStorage('messageBody') ?? defaultMessageBody;
 
     this.customMessageForm = this.formBuilder.group({
-      messageTitle: [messageTitleValue],
-      messageBody: [messageBodyValue],
+      messageTitle: [messageTitleValue, Validators.required],
+      messageBody: [messageBodyValue, Validators.required],
       theme: [null],
     });
 
@@ -63,7 +70,7 @@ export class CustomMessageComponent implements OnInit {
   }
 
   sendMessage(): void {
-    if (!this.customMessageForm) return;
+    if (!this.customMessageForm || this.customMessageForm.invalid) return;
 
     this._saveToLocalStorage('messageTitle');
     this._saveToLocalStorage('messageBody');
@@ -93,5 +100,15 @@ export class CustomMessageComponent implements OnInit {
   private _getItemFormStorage(key: string): string | null {
     const combinedKey = `office_days_${key}`;
     return localStorage.getItem(combinedKey);
+  }
+}
+
+/** Error when invalid control is dirty, touched. */
+export class MyErrorStateMatcher implements ErrorStateMatcher {
+  isErrorState(
+    control: FormControl | null,
+    form: FormGroupDirective | NgForm | null
+  ): boolean {
+    return !!(control && control.invalid && (control.dirty || control.touched));
   }
 }
