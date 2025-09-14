@@ -39,7 +39,7 @@
     <button
       mat-raised-button
       color="accent"
-      (click)="sendMessage()"
+      (click)="openMessageSettings()"
       [disabled]="isLoading"
       class="w-full sm:w-auto"
     >
@@ -55,11 +55,11 @@
         <span>{{ isLoading ? "Sending..." : "Send Notification" }}</span>
       </div>
     </button>
-    <button mat-icon-button (click)="openMessageSettings()">
+    <!-- <button mat-icon-button (click)="openMessageSettings()">
       <div class="flex">
         <mat-icon class="text-gray-600 hover:text-blue-600">settings</mat-icon>
       </div>
-    </button>
+    </button> -->
   </div>
 
   <!-- Latest Message Display -->

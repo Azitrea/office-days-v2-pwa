@@ -89,7 +89,7 @@ export class DashboardComponent {
     this.router.navigateByUrl('profile');
   }
 
-  async sendMessage(): Promise<void> {
+  async sendMessage(title?: string, message?: string): Promise<void> {
     this.errorMessage = undefined;
     this.isLoading = true;
 
@@ -97,8 +97,8 @@ export class DashboardComponent {
       // const userIDs = this.allUsers()?.map((user) => user.id) ?? [];
       const result = await this.firebaseFunctions.sendNotificationToUsers(
         '*', // userIDs as string[],
-        'Cigi?',
-        `From: ${this.firebaseAuthService.currentUser?.displayName}`
+        title ?? 'Cigi?',
+        message ?? `From: ${this.firebaseAuthService.currentUser?.displayName}`
       );
 
       this.isLoading = false;
@@ -133,8 +133,15 @@ export class DashboardComponent {
     });
   }
 
-  openMessageSettings(): void {
+  async openMessageSettings(): Promise<void> {
     let dialogRef = this.dialog.open(CustomMessageComponent);
+    dialogRef.componentInstance.currentUserDisplayName =
+      this.firebaseAuthService.currentUser?.displayName;
+
+    dialogRef.beforeClosed().subscribe((result) => {
+      if (result === undefined) return;
+      this.sendMessage(result.messageTitle, result.messageBody);
+    });
   }
 
   openReplyList(messageIndex: number): void {

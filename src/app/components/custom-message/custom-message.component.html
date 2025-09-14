@@ -1,3 +1,49 @@
-<div class="p-4">
-  Message settings will be here
+<div class="p-4 flex flex-col gap-2">
+  <div class="flex justify-between items-center">
+    <div class="font-medium text-lg">Customize your message!</div>
+    <button matIconButton class="flex">
+      <mat-icon (click)="close()">close</mat-icon>
+    </button>
+  </div>
+  @if (customMessageForm) {
+  <form [formGroup]="customMessageForm" class="flex flex-col gap-2">
+    <mat-form-field class="w-full">
+      <mat-label>Title</mat-label>
+      <input
+        matInput
+        formControlName="messageTitle"
+        type="text"
+        placeholder="Title"
+        [maxlength]="VALID_MESSAGE_TITLE_LENGTH"
+      />
+      <mat-hint align="end"
+        >{{ customMessageForm.value.messageTitle?.length ?? 0 }} /
+        {{ VALID_MESSAGE_TITLE_LENGTH }}</mat-hint
+      >
+    </mat-form-field>
+    <div>
+      <mat-form-field class="w-full max-h-48">
+        <mat-label>Message</mat-label>
+        <textarea
+          matInput
+          formControlName="messageBody"
+          [maxlength]="VALID_MESSAGE_BODY_LENGTH"
+          placeholder="Message"
+        ></textarea>
+        <mat-hint align="end"
+          >{{ customMessageForm.value.messageBody?.length ?? 0 }} /
+          {{ VALID_MESSAGE_BODY_LENGTH }}</mat-hint
+        >
+      </mat-form-field>
+    </div>
+    <button
+      mat-raised-button
+      color="accent"
+      (click)="sendMessage()"
+      class="w-full sm:w-auto"
+    >
+      Send Notification
+    </button>
+  </form>
+  }
 </div>
