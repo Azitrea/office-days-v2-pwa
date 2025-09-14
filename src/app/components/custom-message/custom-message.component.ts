@@ -1,6 +1,7 @@
 import { Component, DestroyRef, Input, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
+  AbstractControl,
   FormBuilder,
   FormControl,
   FormGroup,
@@ -8,6 +9,8 @@ import {
   FormsModule,
   NgForm,
   ReactiveFormsModule,
+  ValidationErrors,
+  ValidatorFn,
   Validators,
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -56,8 +59,14 @@ export class CustomMessageComponent implements OnInit {
       this._getItemFormStorage('messageBody') ?? defaultMessageBody;
 
     this.customMessageForm = this.formBuilder.group({
-      messageTitle: [messageTitleValue, Validators.required],
-      messageBody: [messageBodyValue, Validators.required],
+      messageTitle: [
+        messageTitleValue,
+        [Validators.required, isEmptyTextValidator()],
+      ],
+      messageBody: [
+        messageBodyValue,
+        [Validators.required, isEmptyTextValidator],
+      ],
       theme: [null],
     });
 
@@ -75,7 +84,11 @@ export class CustomMessageComponent implements OnInit {
     this._saveToLocalStorage('messageTitle');
     this._saveToLocalStorage('messageBody');
 
-    this.dialogRef.close(this.customMessageForm.value);
+    const formValue = this.customMessageForm.value;
+    this.dialogRef.close({
+      messageTitle: formValue.messageTitle.trim(),
+      messageBody: formValue.messageBody.trim(),
+    });
   }
 
   private _subscribeAndSaveToStorage(key: string): void {
@@ -111,4 +124,12 @@ export class MyErrorStateMatcher implements ErrorStateMatcher {
   ): boolean {
     return !!(control && control.invalid && (control.dirty || control.touched));
   }
+}
+
+function isEmptyTextValidator(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const isEmptyText =
+      control.value.length === 0 || control.value.trim().length === 0;
+    return isEmptyText ? { required: { value: true } } : null;
+  };
 }

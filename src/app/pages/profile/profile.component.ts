@@ -31,7 +31,7 @@ import {
   styleUrl: './profile.component.scss',
 })
 export class ProfileComponent implements OnInit {
-  readonly APP_VERSION: string = 'v1.0.8';
+  readonly APP_VERSION: string = 'v1.0.9';
 
   isLoading: boolean = false;
   isFirebaseMessagignActive: Signal<boolean | undefined>;
