@@ -1,12 +1,25 @@
-<div class="p-4 flex flex-col gap-2">
-  <div class="flex justify-between items-center">
-    <div class="font-medium text-lg">Customize your message!</div>
-    <button matIconButton class="flex">
-      <mat-icon (click)="close()">close</mat-icon>
-    </button>
-  </div>
+<div class="flex flex-col gap-4 p-6 text-on-surface">
+  <!-- Top App Bar -->
+  <header class="-mx-6 -mt-6 mb-2 border-b border-on-surface/10 bg-surface/80 backdrop-blur-xl">
+    <div class="flex h-16 items-center justify-between px-4 gap-2">
+      <div class="flex items-center gap-4">
+        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-secondary-container">
+          <mat-icon class="text-primary">edit_note</mat-icon>
+        </div>
+        <span class="text-xl font-extrabold text-primary">Customize message</span>
+      </div>
+      <button
+        mat-icon-button
+        aria-label="Close"
+        class="!flex text-primary hover:opacity-80 active:scale-95"
+        (click)="close()"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </header>
   @if (customMessageForm) {
-  <form [formGroup]="customMessageForm" class="flex flex-col gap-2">
+  <form [formGroup]="customMessageForm" class="flex flex-col gap-3">
     <mat-form-field class="w-full">
       <mat-label>Title</mat-label>
       <input
@@ -45,12 +58,11 @@
       </mat-form-field>
     </div>
     <button
-      mat-raised-button
-      color="accent"
       (click)="sendMessage()"
-      class="w-full sm:w-auto"
+      class="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-8 py-4 font-bold text-on-primary-container shadow-lg shadow-primary/20 transition-all hover:opacity-90 active:scale-95"
     >
-      Send Notification
+      <mat-icon>send</mat-icon>
+      <span>Send Notification</span>
     </button>
   </form>
   }

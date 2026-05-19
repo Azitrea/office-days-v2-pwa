@@ -128,8 +128,8 @@ export class DashboardComponent {
     this.snackBar.open(message, 'Close', {
       duration: 2000,
       panelClass: isError
-        ? ['bg-red-600', 'text-white']
-        : ['bg-green-600', 'text-white'],
+        ? ['app-snack-error']
+        : ['app-snack-success'],
     });
   }
 

@@ -4,11 +4,13 @@ import { FirebaseFirestoreService } from '../../service/firebase-firestore/fireb
 import { toSignal } from '@angular/core/rxjs-interop';
 import { AcceptDecline, FirebseStoredMessage } from '../../model/messages.model';
 import { UserProfileData } from '../../model/user-details.model';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialogRef } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'app-user-response',
-  imports: [CommonModule, MatIcon],
+  imports: [CommonModule, MatButtonModule, MatIcon],
   templateUrl: './user-response.component.html',
   styleUrl: './user-response.component.scss',
 })
@@ -36,7 +38,10 @@ export class UserResponseComponent {
     return result;
   });
 
-  constructor(private firebaseFirestore: FirebaseFirestoreService) {
+  constructor(
+    private firebaseFirestore: FirebaseFirestoreService,
+    private dialogRef: MatDialogRef<UserResponseComponent>
+  ) {
     this.allUsers = toSignal(
       this.firebaseFirestore.firestoreAllUsers.asObservable()
     );
@@ -44,5 +49,9 @@ export class UserResponseComponent {
     this.latestMessages = toSignal(
       this.firebaseFirestore.firestoreLatestMessages.asObservable()
     );
+  }
+
+  close(): void {
+    this.dialogRef.close();
   }
 }

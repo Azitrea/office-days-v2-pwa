@@ -1,8 +1,138 @@
-/* You can add global styles to this file, and also import other style files */
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  color-scheme: dark;
+
+  --color-surface: #131313;
+  --color-surface-rgb: 19 19 19;
+  --color-surface-dim: #131313;
+  --color-surface-dim-rgb: 19 19 19;
+  --color-surface-bright: #3a3939;
+  --color-surface-bright-rgb: 58 57 57;
+  --color-surface-container-lowest: #0e0e0e;
+  --color-surface-container-lowest-rgb: 14 14 14;
+  --color-surface-container-low: #1c1b1b;
+  --color-surface-container-low-rgb: 28 27 27;
+  --color-surface-container: #201f1f;
+  --color-surface-container-rgb: 32 31 31;
+  --color-surface-container-high: #2a2a2a;
+  --color-surface-container-high-rgb: 42 42 42;
+  --color-surface-container-highest: #353534;
+  --color-surface-container-highest-rgb: 53 53 52;
+  --color-on-surface: #e5e2e1;
+  --color-on-surface-rgb: 229 226 225;
+  --color-on-surface-variant: #dac2ae;
+  --color-on-surface-variant-rgb: 218 194 174;
+  --color-inverse-surface: #e5e2e1;
+  --color-inverse-surface-rgb: 229 226 225;
+  --color-inverse-on-surface: #313030;
+  --color-inverse-on-surface-rgb: 49 48 48;
+  --color-outline: #a28d7a;
+  --color-outline-rgb: 162 141 122;
+  --color-outline-variant: #544434;
+  --color-outline-variant-rgb: 84 68 52;
+  --color-surface-tint: #ffb86b;
+  --color-surface-tint-rgb: 255 184 107;
+  --color-primary: #ff9f1c;
+  --color-primary-rgb: 255 159 28;
+  --color-on-primary: #492900;
+  --color-on-primary-rgb: 73 41 0;
+  --color-primary-container: #ffc68b;
+  --color-primary-container-rgb: 255 198 139;
+  --color-on-primary-container: #683c00;
+  --color-on-primary-container-rgb: 104 60 0;
+  --color-inverse-primary: #895100;
+  --color-inverse-primary-rgb: 137 81 0;
+  --color-secondary: #e5beb5;
+  --color-secondary-rgb: 229 190 181;
+  --color-on-secondary: #432a25;
+  --color-on-secondary-rgb: 67 42 37;
+  --color-secondary-container: #5c403a;
+  --color-secondary-container-rgb: 92 64 58;
+  --color-on-secondary-container: #d2ada4;
+  --color-on-secondary-container-rgb: 210 173 164;
+  --color-tertiary: #d2d2bb;
+  --color-tertiary-rgb: 210 210 187;
+  --color-on-tertiary: #303221;
+  --color-on-tertiary-rgb: 48 50 33;
+  --color-tertiary-container: #b6b7a0;
+  --color-tertiary-container-rgb: 182 183 160;
+  --color-on-tertiary-container: #474836;
+  --color-on-tertiary-container-rgb: 71 72 54;
+  --color-error: #ffb4ab;
+  --color-error-rgb: 255 180 171;
+  --color-on-error: #690005;
+  --color-on-error-rgb: 105 0 5;
+  --color-error-container: #93000a;
+  --color-error-container-rgb: 147 0 10;
+  --color-on-error-container: #ffdad6;
+  --color-on-error-container-rgb: 255 218 214;
+  --color-background: #131313;
+  --color-background-rgb: 19 19 19;
+  --color-on-background: #e5e2e1;
+  --color-on-background-rgb: 229 226 225;
+  --color-surface-variant: #353534;
+  --color-surface-variant-rgb: 53 53 52;
+  --color-cream: #f5f5dc;
+  --color-cream-rgb: 245 245 220;
+  --color-scrim: #000000;
+  --color-scrim-rgb: 0 0 0;
+
+  --mat-sys-background: var(--color-background);
+  --mat-sys-error: var(--color-error);
+  --mat-sys-error-container: var(--color-error-container);
+  --mat-sys-inverse-on-surface: var(--color-inverse-on-surface);
+  --mat-sys-inverse-primary: var(--color-inverse-primary);
+  --mat-sys-inverse-surface: var(--color-inverse-surface);
+  --mat-sys-on-background: var(--color-on-background);
+  --mat-sys-on-error: var(--color-on-error);
+  --mat-sys-on-error-container: var(--color-on-error-container);
+  --mat-sys-on-primary: var(--color-on-primary);
+  --mat-sys-on-primary-container: var(--color-on-primary-container);
+  --mat-sys-on-secondary: var(--color-on-secondary);
+  --mat-sys-on-secondary-container: var(--color-on-secondary-container);
+  --mat-sys-on-surface: var(--color-on-surface);
+  --mat-sys-on-surface-variant: var(--color-on-surface-variant);
+  --mat-sys-on-tertiary: var(--color-on-tertiary);
+  --mat-sys-on-tertiary-container: var(--color-on-tertiary-container);
+  --mat-sys-outline: var(--color-outline);
+  --mat-sys-outline-variant: var(--color-outline-variant);
+  --mat-sys-primary: var(--color-primary);
+  --mat-sys-primary-container: var(--color-primary-container);
+  --mat-sys-scrim: var(--color-scrim);
+  --mat-sys-secondary: var(--color-secondary);
+  --mat-sys-secondary-container: var(--color-secondary-container);
+  --mat-sys-shadow: #000000;
+  --mat-sys-surface: var(--color-surface);
+  --mat-sys-surface-bright: var(--color-surface-bright);
+  --mat-sys-surface-container: var(--color-surface-container);
+  --mat-sys-surface-container-high: var(--color-surface-container-high);
+  --mat-sys-surface-container-highest: var(--color-surface-container-highest);
+  --mat-sys-surface-container-low: var(--color-surface-container-low);
+  --mat-sys-surface-container-lowest: var(--color-surface-container-lowest);
+  --mat-sys-surface-dim: var(--color-surface-dim);
+  --mat-sys-surface-tint: var(--color-surface-tint);
+  --mat-sys-surface-variant: var(--color-surface-variant);
+  --mat-sys-tertiary: var(--color-tertiary);
+  --mat-sys-tertiary-container: var(--color-tertiary-container);
+  --mat-sys-body-large-font: "Plus Jakarta Sans";
+  --mat-sys-body-medium-font: "Plus Jakarta Sans";
+  --mat-sys-body-small-font: "Plus Jakarta Sans";
+  --mat-sys-display-large-font: "Plus Jakarta Sans";
+  --mat-sys-display-medium-font: "Plus Jakarta Sans";
+  --mat-sys-display-small-font: "Plus Jakarta Sans";
+  --mat-sys-headline-large-font: "Plus Jakarta Sans";
+  --mat-sys-headline-medium-font: "Plus Jakarta Sans";
+  --mat-sys-headline-small-font: "Plus Jakarta Sans";
+  --mat-sys-label-large-font: "Plus Jakarta Sans";
+  --mat-sys-label-medium-font: "Plus Jakarta Sans";
+  --mat-sys-label-small-font: "Plus Jakarta Sans";
+  --mat-sys-title-large-font: "Plus Jakarta Sans";
+  --mat-sys-title-medium-font: "Plus Jakarta Sans";
+  --mat-sys-title-small-font: "Plus Jakarta Sans";
+}
 
 html,
 body {
@@ -11,5 +141,72 @@ body {
 
 body {
   margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
+  background:
+    radial-gradient(circle at top, rgb(var(--color-surface-tint-rgb) / 0.12), transparent 32rem),
+    var(--color-background);
+  background-repeat: no-repeat;
+  color: var(--color-on-background);
+  font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+mat-card.mat-mdc-card {
+  background: rgb(var(--color-surface-container-rgb) / 0.8);
+  border: 1px solid rgb(var(--color-cream-rgb) / 0.1);
+  border-radius: 0.75rem;
+  color: var(--color-on-surface);
+  backdrop-filter: blur(20px);
+  box-shadow: none;
+}
+
+.mat-mdc-dialog-container .mdc-dialog__surface {
+  background: rgb(var(--color-surface-container-high-rgb) / 0.92);
+  border: 1px solid rgb(var(--color-cream-rgb) / 0.1);
+  border-radius: 0.75rem;
+  color: var(--color-on-surface);
+  backdrop-filter: blur(30px);
+}
+
+.cdk-overlay-dark-backdrop {
+  background: rgb(var(--color-scrim-rgb) / 0.72);
+  backdrop-filter: blur(30px);
+}
+
+.cdk-overlay-backdrop.cdk-overlay-backdrop-showing {
+  opacity: 0.75;
+}
+
+.mat-mdc-form-field {
+  --mdc-filled-text-field-container-color: #0a0a0a;
+  --mdc-filled-text-field-focus-active-indicator-color: var(--color-primary);
+  --mdc-filled-text-field-hover-active-indicator-color: var(--color-outline);
+  --mdc-filled-text-field-input-text-color: var(--color-on-surface);
+  --mdc-filled-text-field-label-text-color: var(--color-on-surface-variant);
+  --mat-form-field-subscript-text-color: var(--color-on-surface-variant);
+}
+
+.mat-mdc-form-field .mdc-text-field {
+  border-radius: 0.75rem;
+}
+
+.mat-mdc-slide-toggle {
+  --mdc-switch-selected-track-color: var(--color-primary);
+  --mdc-switch-selected-handle-color: var(--color-tertiary);
+  --mdc-switch-unselected-track-color: var(--color-secondary-container);
+  --mdc-switch-unselected-handle-color: var(--color-tertiary);
+}
+
+.mat-mdc-button-base:active {
+  transform: scale(0.98);
+}
+
+.mat-mdc-snack-bar-container.app-snack-success {
+  --mdc-snackbar-container-color: var(--color-tertiary-container);
+  --mdc-snackbar-supporting-text-color: var(--color-on-tertiary);
+  --mat-snack-bar-button-color: var(--color-on-tertiary);
+}
+
+.mat-mdc-snack-bar-container.app-snack-error {
+  --mdc-snackbar-container-color: var(--color-error-container);
+  --mdc-snackbar-supporting-text-color: var(--color-on-error-container);
+  --mat-snack-bar-button-color: var(--color-on-error-container);
 }

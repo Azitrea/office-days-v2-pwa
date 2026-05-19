@@ -27,7 +27,6 @@ export class LoginComponent {
     try {
       this.isLoading = true;
       const user = await this.firebaseAuthService.signInWithGoogle();
-      console.log(user);
 
       if (user) {
         await this.firebaseFirestoreService.initializeUserIfFirstLogin(user);

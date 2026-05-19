@@ -31,7 +31,7 @@ import {
   styleUrl: './profile.component.scss',
 })
 export class ProfileComponent implements OnInit {
-  readonly APP_VERSION: string = 'v1.0.9';
+  readonly APP_VERSION: string = 'v1.1.0';
 
   isLoading: boolean = false;
   isFirebaseMessagignActive: Signal<boolean | undefined>;
@@ -78,6 +78,15 @@ export class ProfileComponent implements OnInit {
 
   inputChange(key: string | number, event: MatSlideToggleChange): void {
     this.updateUserDetail({ [key]: event.checked });
+  }
+
+  subscriptionChange(event: MatSlideToggleChange): void {
+    if (event.checked) {
+      this.subscribeToMessages();
+      return;
+    }
+
+    this.unsubscribeFromMessages();
   }
 
   async updateUserDetail(details: Partial<UserDetails>): Promise<void> {

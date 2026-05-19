@@ -1,17 +1,35 @@
-<div class="p-4">
-  <div class="text-center font-semibold mb-4">List of users, who replied.</div>
+<div class="p-6 text-on-surface">
+  <!-- Top App Bar -->
+  <header class="-mx-6 -mt-6 mb-2 border-b border-on-surface/10 bg-surface/80 backdrop-blur-xl">
+    <div class="flex h-16 items-center justify-between px-4 gap-3">
+      <div class="flex items-center gap-4">
+        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-secondary-container">
+          <mat-icon class="text-primary">group</mat-icon>
+        </div>
+        <span class="text-xl font-extrabold text-primary">User responses</span>
+      </div>
+      <button
+        mat-icon-button
+        aria-label="Close"
+        class="!flex text-primary hover:opacity-80 active:scale-95"
+        (click)="close()"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </header>
   @for (resp of userResponses(); track $index) {
-  <div class="flex gap-2 justify-between border-b last:border-b-0">
+  <div class="flex justify-between gap-2 border-b border-outline-variant py-2 last:border-b-0">
     <div class="text-sm flex items-center">{{ resp.displayName }}:</div>
     <div class="flex">
       @if (resp.acceptDecline) {
-      <mat-icon class="text-green-500">check</mat-icon>
+      <mat-icon class="text-tertiary">check</mat-icon>
       } @else {
-      <mat-icon class="text-red-500">close</mat-icon>
+      <mat-icon class="text-error">close</mat-icon>
       }
     </div>
   </div>
   } @empty {
-  <div class="text-center italic text-sm">Nobody has replied.</div>
+  <div class="text-center text-sm italic text-on-surface-variant">Nobody has replied.</div>
   }
 </div>

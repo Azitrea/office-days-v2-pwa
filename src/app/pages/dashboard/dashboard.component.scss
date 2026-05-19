@@ -4,7 +4,7 @@
   aspect-ratio: 5;
   display: flex;
   justify-content: space-between;
-  --_g: no-repeat radial-gradient(farthest-side,#6b7280 95%,#0000);
+  --_g: no-repeat radial-gradient(farthest-side, var(--color-primary) 95%, #0000);
   background:
     var(--_g) calc(1*100%/3) 0,
     var(--_g) calc(2*100%/3) 0;
@@ -16,7 +16,7 @@
   height: inherit;
   aspect-ratio: 1;
   border-radius: 50%;
-  background: #6b7280;
+  background: var(--color-primary);
   animation: l41 1s infinite;
 }
 .loader:after {
