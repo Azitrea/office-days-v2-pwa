@@ -15,6 +15,13 @@ import {
   MatSlideToggleChange,
   MatSlideToggleModule,
 } from '@angular/material/slide-toggle';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectChange, MatSelectModule } from '@angular/material/select';
+import {
+  APP_THEMES,
+  AppTheme,
+  ThemeService,
+} from '../../service/theme/theme.service';
 
 @Component({
   selector: 'app-profile',
@@ -26,12 +33,17 @@ import {
     MatCardModule,
     MatIconModule,
     MatSlideToggleModule,
+    MatFormFieldModule,
+    MatSelectModule,
   ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss',
 })
 export class ProfileComponent implements OnInit {
   readonly APP_VERSION: string = 'v1.1.0';
+
+  readonly themes = APP_THEMES;
+  selectedTheme!: AppTheme;
 
   isLoading: boolean = false;
   isFirebaseMessagignActive: Signal<boolean | undefined>;
@@ -56,7 +68,8 @@ export class ProfileComponent implements OnInit {
     private firebaseAuthService: FirebaseAuthService,
     private firebaseMessagingService: FirebaseMessagingService,
     private firebaseFirestoreService: FirebaseFirestoreService,
-    private router: Router
+    private router: Router,
+    private themeService: ThemeService
   ) {
     this.currentUser = toSignal(this.firebaseAuthService.user$);
     this.isFirebaseMessagignActive = toSignal(
@@ -69,11 +82,18 @@ export class ProfileComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.selectedTheme = this.themeService.theme;
+
     const uid = this.firebaseAuthService.currentUser?.uid;
     if (!uid) return;
     this.firebaseFirestoreService.getUserDetails(uid).then((details) => {
       this.userDetails = details;
     });
+  }
+
+  onThemeChange(event: MatSelectChange): void {
+    this.themeService.setTheme(event.value as AppTheme);
+    this.selectedTheme = this.themeService.theme;
   }
 
   inputChange(key: string | number, event: MatSlideToggleChange): void {
