@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 
-export type AppTheme = 'dark' | 'morning-latte' | 'dark-blue';
+export type AppTheme = 'dark' | 'morning-latte' | 'sunrise-roast' | 'dark-blue';
 
 export const APP_THEMES: { id: AppTheme; label: string }[] = [
   { id: 'dark', label: 'Obsidian Brew' },
   { id: 'morning-latte', label: 'Morning Latte' },
+  { id: 'sunrise-roast', label: 'Sunrise Roast' },
   { id: 'dark-blue', label: 'Nocturnal Amber' },
 ];
 
@@ -14,6 +15,7 @@ const DEFAULT_THEME: AppTheme = 'dark';
 const THEME_META_COLORS: Record<AppTheme, string> = {
   dark: '#131313',
   'morning-latte': '#fff5ec',
+  'sunrise-roast': '#eefcfd',
   'dark-blue': '#001526',
 };
 
