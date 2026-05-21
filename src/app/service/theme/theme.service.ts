@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 
-export type AppTheme = 'dark' | 'light' | 'dark-blue';
+export type AppTheme = 'dark' | 'morning-latte' | 'dark-blue';
 
 export const APP_THEMES: { id: AppTheme; label: string }[] = [
   { id: 'dark', label: 'Obsidian Brew' },
-  { id: 'light', label: 'Luminous Amber' },
+  { id: 'morning-latte', label: 'Morning Latte' },
   { id: 'dark-blue', label: 'Nocturnal Amber' },
 ];
 
@@ -13,7 +13,7 @@ const DEFAULT_THEME: AppTheme = 'dark';
 
 const THEME_META_COLORS: Record<AppTheme, string> = {
   dark: '#131313',
-  light: '#f8f9fa',
+  'morning-latte': '#fff5ec',
   'dark-blue': '#001526',
 };
 
@@ -50,6 +50,9 @@ export class ThemeService {
   private readStoredTheme(): AppTheme {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored === 'light') {
+        return 'morning-latte';
+      }
       if (stored && APP_THEMES.some((t) => t.id === stored)) {
         return stored as AppTheme;
       }
