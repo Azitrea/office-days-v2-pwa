@@ -40,7 +40,7 @@ import {
   styleUrl: './profile.component.scss',
 })
 export class ProfileComponent implements OnInit {
-  readonly APP_VERSION: string = 'v1.1.1';
+  readonly APP_VERSION: string = 'v1.1.2';
 
   readonly themes = APP_THEMES;
   selectedTheme!: AppTheme;

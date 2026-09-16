@@ -25,7 +25,14 @@ export const sendNotification = async (
     data: {
       senderUID: senderUID,
     },
+    android: {
+      priority: 'high',
+    },
     webpush: {
+      headers: {
+        Urgency: 'high',
+        TTL: '1800',
+      },
       notification: {
         title,
         body,
